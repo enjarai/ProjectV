@@ -1,20 +1,35 @@
 package dev.enjarai.projectv.resource;
 
+import dev.enjarai.projectv.ProjectV;
 import dev.enjarai.projectv.resource.palette.Palette;
 import net.minecraft.client.texture.NativeImage;
 import org.jetbrains.annotations.Contract;
 
 public class ImageUtils {
-    @Contract("_, _ -> param1")
-    public static NativeImage paletteifyImage(NativeImage source, Palette palette) {
+    @Contract("_, _, _ -> param1")
+    public static NativeImage paletteifyImage(NativeImage source, NativeImage paletteKey, NativeImage palette) {
+        if (paletteKey.getWidth() != palette.getWidth()) {
+            throw new RuntimeException("Palette key and palette itself are not the same size");
+        }
+
         for (int x = 0; x < source.getWidth(); x++) {
             for (int y = 0; y < source.getHeight(); y++) {
                 var currentColor = source.getColor(x, y);
-                var palettedColor = palette.lookUp(currentColor);
 
-                if (currentColor != palettedColor) {
-                    source.setColor(x, y, palettedColor);
+                var index = -1;
+                for (int i = 0; i < paletteKey.getWidth(); i++) {
+                    var keyColor = paletteKey.getColor(i, 0);
+                    if (keyColor == currentColor) {
+                        index = i;
+                        break;
+                    }
                 }
+                if (index == -1) {
+                    continue;
+                }
+
+                var palettedColor = palette.getColor(index, 0);
+                source.setColor(x, y, palettedColor);
             }
         }
         return source;
