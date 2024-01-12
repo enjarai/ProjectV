@@ -1,22 +1,36 @@
 package dev.enjarai.projectv;
 
+import dev.enjarai.projectv.block.BlockVariantGenerator;
 import net.fabricmc.api.ModInitializer;
 
+import net.minecraft.registry.Registry;
+import net.minecraft.util.Identifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Objects;
+
 public class ProjectV implements ModInitializer {
-	// This logger is used to write text to the console and the log file.
-	// It is considered best practice to use your mod id as the logger's name.
-	// That way, it's clear which mod wrote info, warnings, and errors.
-    public static final Logger LOGGER = LoggerFactory.getLogger("projectv");
+
+	public static final String MOD_ID = "projectv";
+    public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
 
 	@Override
 	public void onInitialize() {
-		// This code runs as soon as Minecraft is in a mod-load-ready state.
-		// However, some things (like resources) may still be uninitialized.
-		// Proceed with mild caution.
+		BlockVariantGenerator.addDefaultVariants();
 
-		LOGGER.info("Hello Fabric world!");
+		// TODO entry points?
+
+		BlockVariantGenerator.registerVariants();
+	}
+
+	public static <T> Identifier constructVariantIdentifier(Registry<T> registry, T original, T material) {
+		var originalIdentifier = Objects.requireNonNull(registry.getId(original));
+		var materialIdentifier = Objects.requireNonNull(registry.getId(material));
+
+		return new Identifier(
+				MOD_ID,
+				originalIdentifier.getNamespace() + '_' + originalIdentifier.getPath() + '-' + materialIdentifier.getNamespace() + '_' + materialIdentifier.getPath()
+		);
 	}
 }
