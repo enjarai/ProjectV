@@ -1,10 +1,13 @@
 package dev.enjarai.projectv;
 
+import dev.enjarai.projectv.block.BlockMaterialGroup;
+import dev.enjarai.projectv.resource.BlockVariantTextureGenerator;
+import dev.enjarai.projectv.resource.TextureVariantFactory;
 import net.fabricmc.api.ClientModInitializer;
 
 public class ProjectVClient implements ClientModInitializer {
 	@Override
 	public void onInitializeClient() {
-		// This entrypoint is suitable for setting up client-specific logic, such as rendering.
+		BlockVariantTextureGenerator.registerTextureFactory(BlockMaterialGroup.PLANKS, TextureVariantFactory.blank(0xff8800));
 	}
 }

@@ -17,7 +17,7 @@ public final class BlockVariantGenerator {
     // Unused default constructor
     private BlockVariantGenerator() {}
 
-    private static final List<BlockVariantHolder<?, ?>> HOLDERS = new ArrayList<>();
+    private static final Map<BlockMaterialGroup, Set<BlockVariantHolder<?, ?>>> HOLDERS = new HashMap<>();
     private static final Map<BlockMaterialGroup, Set<Block>> MATERIALS = new HashMap<>();
     private static boolean hasRegistered = false;
 
@@ -26,7 +26,7 @@ public final class BlockVariantGenerator {
             throw new IllegalStateException("Attempting to add a variant when already registered variants");
         }
 
-        HOLDERS.add(new BlockVariantHolder<>(original, factory, materialGroup));
+        HOLDERS.computeIfAbsent(materialGroup, ignored -> new HashSet<>()).add(new BlockVariantHolder<>(original, factory));
     }
 
     public static void addMaterials(BlockMaterialGroup group, Block... blocks) {
@@ -45,9 +45,11 @@ public final class BlockVariantGenerator {
     public static void registerVariants() {
         hasRegistered = true;
 
-        for (var holder : HOLDERS) {
-            for (var materialBlock :  MATERIALS.get(holder.materialGroup)) {
-                registerVariant(materialBlock, holder);
+        for (var entry : HOLDERS.entrySet()) {
+            for (var materialBlock :  MATERIALS.get(entry.getKey())) {
+                for (var holder : entry.getValue()) {
+                    registerVariant(materialBlock, holder);
+                }
             }
         }
     }
@@ -60,10 +62,27 @@ public final class BlockVariantGenerator {
         Registry.register(Registries.ITEM, identifier, new BlockItem(block, new FabricItemSettings()));
     }
 
+    @ApiStatus.Internal
+    public static void iterateOverVariants(BlockMaterialGroup materialGroup, VariantConsumer consumer) {
+        var materialBlocks = MATERIALS.get(materialGroup);
+        var holders = HOLDERS.get(materialGroup);
+
+        for (var holder : holders) {
+            for (var material : materialBlocks) {
+                consumer.consume(holder.original, material);
+            }
+        }
+    }
+
     @FunctionalInterface
     public interface VariantBlockFactory<V extends Block & VariantBlock> {
         V create(FabricBlockSettings settings);
     }
 
-    private record BlockVariantHolder<O extends Block, V extends Block & VariantBlock>(O original, VariantBlockFactory<V> factory, BlockMaterialGroup materialGroup) {}
+    @FunctionalInterface
+    public interface VariantConsumer {
+        void consume(Block baseBlock, Block materialBlock);
+    }
+
+    private record BlockVariantHolder<O extends Block, V extends Block & VariantBlock>(O original, VariantBlockFactory<V> factory) {}
 }

@@ -8,8 +8,17 @@ import org.jetbrains.annotations.Contract;
 import java.io.IOException;
 import java.util.function.IntUnaryOperator;
 
+@FunctionalInterface
 public interface TextureVariantFactory {
-    static TextureVariantFactory ofPalette(Identifier paletteKeyLocation) {
+    static TextureVariantFactory blank(int color) {
+        return (resourceManager, baseTexture, materialTexture) -> {
+            var texture = new NativeImage(1, 1, false);
+            texture.setColor(0, 0, color);
+            return texture;
+        };
+    }
+
+    static TextureVariantFactory paletted(Identifier paletteKeyLocation) {
         return (resourceManager, baseTexture, materialTexture) -> {
             var paletteKeyResource = resourceManager.getResource(paletteKeyLocation);
             if (paletteKeyResource.isEmpty()) {
