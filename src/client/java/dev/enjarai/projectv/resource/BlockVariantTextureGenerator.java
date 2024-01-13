@@ -17,6 +17,7 @@ import net.minecraft.util.profiler.Profiler;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * Generates all block variant textures and stores them in its pack.
@@ -54,18 +55,22 @@ public class BlockVariantTextureGenerator extends SinglePreparationResourceReloa
 //                    var materialTexture = NativeImage.read(manager.getResource(materialTextureId).orElseThrow().getInputStream());
 
                     try (var generatedTexture = holder.textureFactory().createVariant(manager, null, null)) {
-                        mapBuilder.put(variantBlockId.withPrefixedPath("textures/block/"), generatedTexture.getBytes());
+                        mapBuilder.put(variantBlockId.withPrefixedPath("textures/block/").withSuffixedPath(".png"), generatedTexture.getBytes());
                     }
                     // TODO multiple textures per block
 
                     var variantModelId = variantBlockId.withPrefixedPath("models/block/");
                     var generatedModelJson = Models.CUBE_ALL.createJson(variantModelId, Map.of(TextureKey.ALL, variantBlockId.withPrefixedPath("block/")));
-                    mapBuilder.put(variantModelId, generatedModelJson.toString().getBytes(StandardCharsets.UTF_8));
+                    mapBuilder.put(variantModelId.withSuffixedPath(".json"), generatedModelJson.toString().getBytes(StandardCharsets.UTF_8));
                     // TODO multiple models, not just cube all
+
+                    var variantItemModelId = variantBlockId.withPrefixedPath("models/item");
+                    var generatedItemModelJson = new Model(Optional.of(variantModelId), Optional.empty()).createJson(variantItemModelId, Map.of());
+                    mapBuilder.put(variantItemModelId.withSuffixedPath(".json"), generatedItemModelJson.toString().getBytes(StandardCharsets.UTF_8));
 
                     var generatedStateJson = VariantsBlockStateSupplier.create(Registries.BLOCK.get(variantBlockId),
                             BlockStateVariant.create().put(VariantSettings.MODEL, variantBlockId.withPrefixedPath("block/"))).get();
-                    mapBuilder.put(variantBlockId.withPrefixedPath("blockstates/"), generatedStateJson.toString().getBytes(StandardCharsets.UTF_8));
+                    mapBuilder.put(variantBlockId.withPrefixedPath("blockstates/").withSuffixedPath(".json"), generatedStateJson.toString().getBytes(StandardCharsets.UTF_8));
                     ProjectV.LOGGER.info(generatedStateJson.toString());
                     // TODO yea you get it, need to make this dynamic
 
