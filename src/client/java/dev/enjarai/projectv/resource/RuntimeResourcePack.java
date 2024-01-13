@@ -87,11 +87,7 @@ public class RuntimeResourcePack implements ResourcePack {
 
     @Override
     public Set<String> getNamespaces(ResourceType type) {
-        var namespaces = ImmutableSet.<String>builder();
-        for (Identifier identifier : getMap(type).keySet()) {
-            namespaces.add(identifier.getNamespace());
-        }
-        return namespaces.build();
+        return Set.of(ProjectV.MOD_ID);
     }
 
     /**

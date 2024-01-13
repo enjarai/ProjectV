@@ -28,10 +28,7 @@ import java.util.*;
 public class BlockVariantTextureGenerator implements SimpleSynchronousResourceReloadListener {
     public static final RuntimeResourcePack PACK = new RuntimeResourcePack("Project V: Block Variants");
     static {
-        PackAdderEvent.EVENT.register((managerType, packs) -> {
-
-            packs.add(PACK)
-        });
+        PackAdderEvent.EVENT.register((managerType, packs) -> packs.add(PACK));
     }
     private static final HashMap<BlockMaterialGroup, TextureVariantHolder> HOLDERS = new HashMap<>();
     public static final Identifier IDENTIFIER = new Identifier(ProjectV.MOD_ID, "block_variant_generator");

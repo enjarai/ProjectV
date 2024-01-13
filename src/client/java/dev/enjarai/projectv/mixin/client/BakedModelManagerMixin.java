@@ -18,7 +18,7 @@ public class BakedModelManagerMixin {
 
     @Inject(method = "reload", at = @At("HEAD"))
     private void reloadBlockVariantTextures(ResourceReloader.Synchronizer synchronizer, ResourceManager manager, Profiler prepareProfiler, Profiler applyProfiler, Executor prepareExecutor, Executor applyExecutor, CallbackInfoReturnable<CompletableFuture<Void>> cir) {
-        //new BlockVariantTextureGenerator().reload(manager);
+        new BlockVariantTextureGenerator().reload(manager);
     }
 
 }

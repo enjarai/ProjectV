@@ -3,14 +3,12 @@
   "package": "dev.enjarai.projectv.mixin.client",
   "compatibilityLevel": "JAVA_17",
   "client": [
-    "BakedModelManagerMixin",
-    "ExampleClientMixin"
+    "BakedModelManagerMixin"
   ],
   "injectors": {
     "defaultRequire": 1
   },
   "mixins": [
-    "LifecycledResourceManagerImplMixin",
-    "ResourceManagerHelperImplMixin"
+    "LifecycledResourceManagerImplMixin"
   ]
 }
