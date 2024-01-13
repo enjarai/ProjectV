@@ -4,8 +4,6 @@ import dev.enjarai.projectv.block.BlockMaterialGroup;
 import dev.enjarai.projectv.resource.BlockVariantTextureGenerator;
 import dev.enjarai.projectv.resource.TextureVariantFactory;
 import net.fabricmc.api.ClientModInitializer;
-import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
-import net.minecraft.resource.ResourceType;
 
 public class ProjectVClient implements ClientModInitializer {
 	@Override

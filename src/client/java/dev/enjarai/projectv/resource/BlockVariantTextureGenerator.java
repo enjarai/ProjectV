@@ -4,17 +4,13 @@ import com.google.common.collect.ImmutableMap;
 import dev.enjarai.projectv.ProjectV;
 import dev.enjarai.projectv.block.BlockMaterialGroup;
 import dev.enjarai.projectv.block.BlockVariantGenerator;
-import net.fabricmc.fabric.api.resource.IdentifiableResourceReloadListener;
 import net.fabricmc.fabric.api.resource.ResourceReloadListenerKeys;
 import net.fabricmc.fabric.api.resource.SimpleSynchronousResourceReloadListener;
-import net.minecraft.client.texture.NativeImage;
 import net.minecraft.data.client.*;
 import net.minecraft.registry.Registries;
 import net.minecraft.resource.ResourceManager;
 import net.minecraft.resource.ResourceType;
-import net.minecraft.resource.SinglePreparationResourceReloader;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.profiler.Profiler;
 
 import java.nio.charset.StandardCharsets;
 import java.util.*;
@@ -60,11 +56,7 @@ public class BlockVariantTextureGenerator implements SimpleSynchronousResourceRe
                 try {
                     var variantBlockId = ProjectV.constructVariantIdentifier(Registries.BLOCK, baseBlock, materialBlock);
 
-                    // TODO make base textures optional?
-//                    var baseTexture = NativeImage.read(manager.getResource(baseTextureId).orElseThrow().getInputStream());
-//                    var materialTexture = NativeImage.read(manager.getResource(materialTextureId).orElseThrow().getInputStream());
-
-                    try (var generatedTexture = holder.textureFactory().createVariant(manager, null, null)) {
+                    try (var generatedTexture = holder.textureFactory().createVariant(manager, baseTextureId, materialTextureId)) {
                         mapBuilder.put(variantBlockId.withPrefixedPath("textures/block/").withSuffixedPath(".png"), generatedTexture.getBytes());
                     }
                     // TODO multiple textures per block

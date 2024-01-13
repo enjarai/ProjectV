@@ -1,6 +1,5 @@
 package dev.enjarai.projectv.resource;
 
-import com.google.common.collect.ImmutableSet;
 import dev.enjarai.projectv.ProjectV;
 import net.minecraft.client.texture.NativeImage;
 import net.minecraft.resource.InputSupplier;

@@ -1,7 +1,5 @@
 package dev.enjarai.projectv.resource;
 
-import dev.enjarai.projectv.ProjectV;
-import dev.enjarai.projectv.resource.palette.Palette;
 import net.minecraft.client.texture.NativeImage;
 import org.jetbrains.annotations.Contract;
 
