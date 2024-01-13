@@ -20,6 +20,9 @@ repositories {
 	maven {
 		url = "https://maven.kikugie.dev/releases"
 	}
+	maven {
+		url = "https://maven.enjarai.dev/mirrors"
+	}
 }
 
 loom {
@@ -42,6 +45,8 @@ dependencies {
 
 	// Fabric API. This is technically optional, but you probably want it anyway.
 	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
+
+	include modImplementation("com.github.bawnorton.mixinsquared:mixinsquared-fabric:${project.mixinsquared_version}")
 
 	include modRuntimeOnly("dev.kikugie:crash-pipe:0.1.0")
 }

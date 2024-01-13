@@ -5,6 +5,8 @@ import dev.enjarai.projectv.ProjectV;
 import dev.enjarai.projectv.block.BlockMaterialGroup;
 import dev.enjarai.projectv.block.BlockVariantGenerator;
 import net.fabricmc.fabric.api.resource.IdentifiableResourceReloadListener;
+import net.fabricmc.fabric.api.resource.ResourceReloadListenerKeys;
+import net.fabricmc.fabric.api.resource.SimpleSynchronousResourceReloadListener;
 import net.minecraft.client.texture.NativeImage;
 import net.minecraft.data.client.*;
 import net.minecraft.registry.Registries;
@@ -15,9 +17,7 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.profiler.Profiler;
 
 import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 /**
  * Generates all block variant textures and stores them in its pack.
@@ -25,21 +25,31 @@ import java.util.Optional;
  * <p>
  * TODO implement concurrency here?
  */
-public class BlockVariantTextureGenerator extends SinglePreparationResourceReloader<Map<Identifier, byte[]>> implements IdentifiableResourceReloadListener {
+public class BlockVariantTextureGenerator implements SimpleSynchronousResourceReloadListener {
     public static final RuntimeResourcePack PACK = new RuntimeResourcePack("Project V: Block Variants");
     static {
         PackAdderEvent.EVENT.register((managerType, packs) -> packs.add(PACK));
     }
     private static final HashMap<BlockMaterialGroup, TextureVariantHolder> HOLDERS = new HashMap<>();
+    public static final Identifier IDENTIFIER = new Identifier(ProjectV.MOD_ID, "block_variant_generator");
 
 
     public static void registerTextureFactory(BlockMaterialGroup materialGroup, TextureVariantFactory textureFactory) {
         HOLDERS.put(materialGroup, new TextureVariantHolder(textureFactory));
     }
 
+    @Override
+    public Identifier getFabricId() {
+        return IDENTIFIER;
+    }
 
     @Override
-    protected Map<Identifier, byte[]> prepare(ResourceManager manager, Profiler profiler) {
+    public Collection<Identifier> getFabricDependencies() {
+        return List.of(ResourceReloadListenerKeys.MODELS, ResourceReloadListenerKeys.TEXTURES);
+    }
+
+    @Override
+    public void reload(ResourceManager manager) {
         var mapBuilder = ImmutableMap.<Identifier, byte[]>builder();
         HOLDERS.forEach((materialGroup, holder) -> {
             BlockVariantGenerator.iterateOverVariants(materialGroup, (baseBlock, materialBlock) -> {
@@ -79,18 +89,9 @@ public class BlockVariantTextureGenerator extends SinglePreparationResourceReloa
                 }
             });
         });
-        return mapBuilder.buildKeepingLast();
-    }
-
-    @Override
-    protected void apply(Map<Identifier, byte[]> prepared, ResourceManager manager, Profiler profiler) {
+        var map =  mapBuilder.buildKeepingLast();
         PACK.clear();
-        prepared.forEach((key, value) -> PACK.addFileContents(ResourceType.CLIENT_RESOURCES, key, value));
-    }
-
-    @Override
-    public Identifier getFabricId() {
-        return new Identifier(ProjectV.MOD_ID, "block_variant_generator");
+        map.forEach((key, value) -> PACK.addFileContents(ResourceType.CLIENT_RESOURCES, key, value));
     }
 
     private record TextureVariantHolder(TextureVariantFactory textureFactory) {}
