@@ -12,8 +12,8 @@ import java.util.function.IntUnaryOperator;
 public interface TextureVariantFactory {
     static TextureVariantFactory dummy(int color) {
         return (resourceManager, baseTexture, materialTexture) -> {
-            var texture = new NativeImage(1, 1, false);
-            texture.setColor(0, 0, color);
+            var texture = new NativeImage(16, 16, true);
+            texture.fillRect(0, 0, 16, 16, color);
             return texture;
         };
     }

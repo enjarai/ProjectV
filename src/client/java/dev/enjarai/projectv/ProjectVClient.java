@@ -10,6 +10,6 @@ import net.minecraft.resource.ResourceType;
 public class ProjectVClient implements ClientModInitializer {
 	@Override
 	public void onInitializeClient() {
-		BlockVariantTextureGenerator.registerTextureFactory(BlockMaterialGroup.PLANKS, TextureVariantFactory.dummy(0xff8800));
+		BlockVariantTextureGenerator.registerTextureFactory(BlockMaterialGroup.PLANKS, TextureVariantFactory.dummy(0xffff8800));
 	}
 }

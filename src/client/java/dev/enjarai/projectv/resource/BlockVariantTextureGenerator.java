@@ -74,14 +74,14 @@ public class BlockVariantTextureGenerator implements SimpleSynchronousResourceRe
                     mapBuilder.put(variantModelId.withSuffixedPath(".json"), generatedModelJson.toString().getBytes(StandardCharsets.UTF_8));
                     // TODO multiple models, not just cube all
 
-                    var variantItemModelId = variantBlockId.withPrefixedPath("models/item");
-                    var generatedItemModelJson = new Model(Optional.of(variantModelId), Optional.empty()).createJson(variantItemModelId, Map.of());
+                    var variantItemModelId = variantBlockId.withPrefixedPath("models/item/");
+                    var generatedItemModelJson = new Model(Optional.of(variantBlockId.withPrefixedPath("block/")), Optional.empty()).createJson(variantItemModelId, Map.of());
                     mapBuilder.put(variantItemModelId.withSuffixedPath(".json"), generatedItemModelJson.toString().getBytes(StandardCharsets.UTF_8));
+                    System.out.println(generatedItemModelJson);
 
                     var generatedStateJson = VariantsBlockStateSupplier.create(Registries.BLOCK.get(variantBlockId),
                             BlockStateVariant.create().put(VariantSettings.MODEL, variantBlockId.withPrefixedPath("block/"))).get();
                     mapBuilder.put(variantBlockId.withPrefixedPath("blockstates/").withSuffixedPath(".json"), generatedStateJson.toString().getBytes(StandardCharsets.UTF_8));
-                    ProjectV.LOGGER.info(generatedStateJson.toString());
                     // TODO yea you get it, need to make this dynamic
 
                 } catch (Exception e) {
