@@ -27,6 +27,6 @@ public class ResourceManagerHelperImplMixin {
     private void addRegistryEntryListener(List<ResourceReloader> listeners, CallbackInfo ci) {
         if (registryMap.get(ResourceType.CLIENT_RESOURCES) != (Object) this) return;
 
-        listeners.add(0, new BlockVariantTextureGenerator());
+        //listeners.add(0, new BlockVariantTextureGenerator());
     }
 }
