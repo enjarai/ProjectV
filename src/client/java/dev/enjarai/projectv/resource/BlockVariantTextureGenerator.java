@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableMap;
 import dev.enjarai.projectv.ProjectV;
 import dev.enjarai.projectv.block.BlockMaterialGroup;
 import dev.enjarai.projectv.block.BlockVariantGenerator;
+import net.fabricmc.fabric.api.resource.IdentifiableResourceReloadListener;
 import net.minecraft.client.texture.NativeImage;
 import net.minecraft.data.client.*;
 import net.minecraft.registry.Registries;
@@ -23,7 +24,7 @@ import java.util.Map;
  * <p>
  * TODO implement concurrency here?
  */
-public class BlockVariantTextureGenerator extends SinglePreparationResourceReloader<Map<Identifier, byte[]>> {
+public class BlockVariantTextureGenerator extends SinglePreparationResourceReloader<Map<Identifier, byte[]>> implements IdentifiableResourceReloadListener {
     public static final RuntimeResourcePack PACK = new RuntimeResourcePack("Project V: Block Variants");
     static {
         PackAdderEvent.EVENT.register((managerType, packs) -> packs.add(PACK));
@@ -48,11 +49,13 @@ public class BlockVariantTextureGenerator extends SinglePreparationResourceReloa
                 try {
                     var variantBlockId = ProjectV.constructVariantIdentifier(Registries.BLOCK, baseBlock, materialBlock);
 
-                    var baseTexture = NativeImage.read(manager.getResource(baseTextureId).orElseThrow().getInputStream());
-                    var materialTexture = NativeImage.read(manager.getResource(materialTextureId).orElseThrow().getInputStream());
+                    // TODO make base textures optional?
+//                    var baseTexture = NativeImage.read(manager.getResource(baseTextureId).orElseThrow().getInputStream());
+//                    var materialTexture = NativeImage.read(manager.getResource(materialTextureId).orElseThrow().getInputStream());
 
-                    var generatedTexture = holder.textureFactory().createVariant(manager, baseTexture, materialTexture);
-                    mapBuilder.put(variantBlockId.withPrefixedPath("textures/block/"), generatedTexture.getBytes());
+                    try (var generatedTexture = holder.textureFactory().createVariant(manager, null, null)) {
+                        mapBuilder.put(variantBlockId.withPrefixedPath("textures/block/"), generatedTexture.getBytes());
+                    }
                     // TODO multiple textures per block
 
                     var variantModelId = variantBlockId.withPrefixedPath("models/block/");
@@ -63,6 +66,7 @@ public class BlockVariantTextureGenerator extends SinglePreparationResourceReloa
                     var generatedStateJson = VariantsBlockStateSupplier.create(Registries.BLOCK.get(variantBlockId),
                             BlockStateVariant.create().put(VariantSettings.MODEL, variantBlockId.withPrefixedPath("block/"))).get();
                     mapBuilder.put(variantBlockId.withPrefixedPath("blockstates/"), generatedStateJson.toString().getBytes(StandardCharsets.UTF_8));
+                    ProjectV.LOGGER.info(generatedStateJson.toString());
                     // TODO yea you get it, need to make this dynamic
 
                 } catch (Exception e) {
@@ -77,6 +81,11 @@ public class BlockVariantTextureGenerator extends SinglePreparationResourceReloa
     protected void apply(Map<Identifier, byte[]> prepared, ResourceManager manager, Profiler profiler) {
         PACK.clear();
         prepared.forEach((key, value) -> PACK.addFileContents(ResourceType.CLIENT_RESOURCES, key, value));
+    }
+
+    @Override
+    public Identifier getFabricId() {
+        return new Identifier(ProjectV.MOD_ID, "block_variant_generator");
     }
 
     private record TextureVariantHolder(TextureVariantFactory textureFactory) {}

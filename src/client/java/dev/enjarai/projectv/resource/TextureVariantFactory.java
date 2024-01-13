@@ -10,7 +10,7 @@ import java.util.function.IntUnaryOperator;
 
 @FunctionalInterface
 public interface TextureVariantFactory {
-    static TextureVariantFactory blank(int color) {
+    static TextureVariantFactory dummy(int color) {
         return (resourceManager, baseTexture, materialTexture) -> {
             var texture = new NativeImage(1, 1, false);
             texture.setColor(0, 0, color);

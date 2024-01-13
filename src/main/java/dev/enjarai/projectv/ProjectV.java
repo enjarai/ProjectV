@@ -30,7 +30,7 @@ public class ProjectV implements ModInitializer {
 
 		return new Identifier(
 				MOD_ID,
-				originalIdentifier.getNamespace() + '_' + originalIdentifier.getPath() + '-' + materialIdentifier.getNamespace() + '_' + materialIdentifier.getPath()
+				originalIdentifier.getNamespace() + '_' + originalIdentifier.getPath() + '_' + materialIdentifier.getNamespace() + '_' + materialIdentifier.getPath()
 		);
 	}
 }
