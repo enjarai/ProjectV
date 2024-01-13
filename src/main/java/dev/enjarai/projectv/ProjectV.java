@@ -24,6 +24,10 @@ public class ProjectV implements ModInitializer {
 		BlockVariantGenerator.registerVariants();
 	}
 
+	public static Identifier id(String path) {
+		return new Identifier(MOD_ID, path);
+	}
+
 	public static <T> Identifier constructVariantIdentifier(Registry<T> registry, T original, T material) {
 		var originalIdentifier = Objects.requireNonNull(registry.getId(original));
 		var materialIdentifier = Objects.requireNonNull(registry.getId(material));

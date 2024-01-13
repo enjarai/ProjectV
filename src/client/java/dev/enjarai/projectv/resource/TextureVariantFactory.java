@@ -19,7 +19,7 @@ public interface TextureVariantFactory {
 
     static TextureUsing paletted(Identifier paletteKeyLocation) {
         return (resourceManager, baseTexture, materialTexture) -> {
-            var paletteKeyResource = resourceManager.getResource(paletteKeyLocation);
+            var paletteKeyResource = resourceManager.getResource(paletteKeyLocation.withPrefixedPath("projectv/").withSuffixedPath(".png"));
             if (paletteKeyResource.isEmpty()) {
                 throw new RuntimeException("Could not find palette key '" + paletteKeyLocation + "'.");
             }
