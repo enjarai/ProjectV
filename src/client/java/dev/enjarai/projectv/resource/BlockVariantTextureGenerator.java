@@ -4,6 +4,8 @@ import com.google.common.collect.ImmutableMap;
 import dev.enjarai.projectv.ProjectV;
 import dev.enjarai.projectv.block.BlockMaterialGroup;
 import dev.enjarai.projectv.block.BlockVariantGenerator;
+import dev.enjarai.projectv.pack.PackAdderEvent;
+import dev.enjarai.projectv.pack.RuntimePack;
 import net.fabricmc.fabric.api.resource.ResourceReloadListenerKeys;
 import net.fabricmc.fabric.api.resource.SimpleSynchronousResourceReloadListener;
 import net.minecraft.data.client.*;
@@ -22,7 +24,7 @@ import java.util.*;
  * TODO implement concurrency here?
  */
 public class BlockVariantTextureGenerator implements SimpleSynchronousResourceReloadListener {
-    public static final RuntimeResourcePack PACK = new RuntimeResourcePack("Project V: Block Variants");
+    public static final RuntimePack PACK = RuntimePack.create("Project V: Block Variants", ResourceType.CLIENT_RESOURCES);
     static {
         PackAdderEvent.EVENT.register((managerType, packs) -> packs.add(PACK));
     }

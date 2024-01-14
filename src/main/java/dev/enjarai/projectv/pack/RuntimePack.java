@@ -1,7 +1,6 @@
-package dev.enjarai.projectv.resource;
+package dev.enjarai.projectv.pack;
 
 import dev.enjarai.projectv.ProjectV;
-import net.minecraft.client.texture.NativeImage;
 import net.minecraft.resource.InputSupplier;
 import net.minecraft.resource.ResourcePack;
 import net.minecraft.resource.ResourceType;
@@ -12,35 +11,22 @@ import org.jetbrains.annotations.Nullable;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-public class RuntimeResourcePack implements ResourcePack {
+public class RuntimePack implements ResourcePack {
     private final String name;
-    private final Map<Identifier, byte[]> assets = new HashMap<>();
+    private final Map<Identifier, byte[]> contents = new HashMap<>();
+    private final ResourceType type;
 
-
-    public static RuntimeResourcePack create(String name) {
-        return new RuntimeResourcePack(name);
+    public static RuntimePack create(String name, ResourceType type) {
+        return new RuntimePack(name, type);
     }
 
-    protected RuntimeResourcePack(String name) {
+    protected RuntimePack(String name, ResourceType type) {
         this.name = name;
-    }
-
-
-    public void addTextFile(ResourceType type, Identifier id, String text) {
-        addFileContents(type, id, text.getBytes(StandardCharsets.UTF_8));
-    }
-
-    public void addImage(Identifier id, NativeImage image) {
-        try {
-            addFileContents(ResourceType.CLIENT_RESOURCES, id, image.getBytes());
-        } catch (IOException e) {
-            ProjectV.LOGGER.error("Could not add image to runtime pack: ", e);
-        }
+        this.type = type;
     }
 
     public void addFileContents(ResourceType type, Identifier id, byte[] data) {
@@ -48,7 +34,7 @@ public class RuntimeResourcePack implements ResourcePack {
     }
 
     public void clear() {
-        assets.clear();
+        contents.clear();
     }
 
 
@@ -64,10 +50,10 @@ public class RuntimeResourcePack implements ResourcePack {
     @Nullable
     @Override
     public InputSupplier<InputStream> open(ResourceType type, Identifier id) {
-        if (type == ResourceType.CLIENT_RESOURCES) {
-            var asset = getMap(type).get(id);
-            if (asset != null) {
-                return () -> new ByteArrayInputStream(asset);
+        if (type == this.type) {
+            var content = getMap(type).get(id);
+            if (content != null) {
+                return () -> new ByteArrayInputStream(content);
             }
         }
         return null;
@@ -78,15 +64,15 @@ public class RuntimeResourcePack implements ResourcePack {
         var map = getMap(type);
         for (Identifier identifier : map.keySet()) {
             if (identifier.getNamespace().equals(namespace) && identifier.getPath().startsWith(prefix)) {
-                var asset = map.get(identifier);
-                consumer.accept(identifier, () -> new ByteArrayInputStream(asset));
+                var content = map.get(identifier);
+                consumer.accept(identifier, () -> new ByteArrayInputStream(content));
             }
         }
     }
 
     @Override
     public Set<String> getNamespaces(ResourceType type) {
-        return Set.of(ProjectV.MOD_ID);
+        return Set.of(ProjectV.MOD_ID, "c", "minecraft");
     }
 
     /**
@@ -109,14 +95,11 @@ public class RuntimeResourcePack implements ResourcePack {
     }
 
 
-    /**
-     * Added this to potentially support data as well, not really required rn tho.
-     */
     protected Map<Identifier, byte[]> getMap(ResourceType type) {
-        if (type != ResourceType.CLIENT_RESOURCES) {
+        if (type != this.type) {
             return Map.of();
         }
 
-        return assets;
+        return contents;
     }
 }
