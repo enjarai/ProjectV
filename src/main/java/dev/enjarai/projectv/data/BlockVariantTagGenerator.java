@@ -28,7 +28,6 @@ public class BlockVariantTagGenerator {
                     false
             ));
             var json = result.resultOrPartial(ProjectV.LOGGER::error).orElseThrow();
-            System.out.println(json);
             mapBuilder.put(tag.id().withPrefixedPath("tags/blocks/").withSuffixedPath(".json"), json.toString().getBytes(StandardCharsets.UTF_8));
         });
         var map = mapBuilder.buildKeepingLast();
