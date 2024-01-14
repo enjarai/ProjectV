@@ -95,7 +95,6 @@ public class BlockVariantTextureGenerator implements SimpleSynchronousResourceRe
                     var variantItemModelId = variantBlockId.withPrefixedPath("models/item/");
                     var generatedItemModelJson = new Model(Optional.of(variantBlockId.withPrefixedPath("block/")), Optional.empty()).createJson(variantItemModelId, Map.of());
                     mapBuilder.put(variantItemModelId.withSuffixedPath(".json"), generatedItemModelJson.toString().getBytes(StandardCharsets.UTF_8));
-                    System.out.println(generatedItemModelJson);
 
                     // Generate state definition
                     var generatedStateJson = VariantsBlockStateSupplier.create(Registries.BLOCK.get(variantBlockId),
