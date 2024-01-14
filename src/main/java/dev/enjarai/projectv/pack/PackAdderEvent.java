@@ -1,4 +1,4 @@
-package dev.enjarai.projectv.resource;
+package dev.enjarai.projectv.pack;
 
 import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;

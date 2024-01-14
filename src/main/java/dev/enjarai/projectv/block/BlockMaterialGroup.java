@@ -9,5 +9,6 @@ import net.minecraft.util.Identifier;
 public record BlockMaterialGroup(Identifier identifier) {
 
     public static final BlockMaterialGroup PLANKS = new BlockMaterialGroup(new Identifier(ProjectV.MOD_ID, "planks"));
+    public static final BlockMaterialGroup STONE = new BlockMaterialGroup(new Identifier(ProjectV.MOD_ID, "stone"));
 
 }

@@ -1,6 +1,6 @@
 package dev.enjarai.projectv.mixin.client;
 
-import dev.enjarai.projectv.resource.PackAdderEvent;
+import dev.enjarai.projectv.pack.PackAdderEvent;
 import net.minecraft.resource.LifecycledResourceManagerImpl;
 import net.minecraft.resource.ResourcePack;
 import net.minecraft.resource.ResourceType;
