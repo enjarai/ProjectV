@@ -31,13 +31,8 @@ public class BlockVariantTextureGenerator implements SimpleSynchronousResourceRe
     static {
         PackAdderEvent.EVENT.register((managerType, packs) -> packs.add(PACK));
     }
-    private static final HashMap<BlockMaterialGroup, TextureVariantHolder> HOLDERS = new HashMap<>();
     public static final Identifier IDENTIFIER = new Identifier(ProjectV.MOD_ID, "block_variant_generator");
 
-
-    public static void registerTextureFactory(BlockMaterialGroup materialGroup, TextureVariantFactory textureFactory) {
-        HOLDERS.put(materialGroup, new TextureVariantHolder(textureFactory));
-    }
 
     @Override
     public Identifier getFabricId() {
@@ -52,7 +47,7 @@ public class BlockVariantTextureGenerator implements SimpleSynchronousResourceRe
     @Override
     public void reload(ResourceManager manager) {
         var mapBuilder = ImmutableMap.<Identifier, byte[]>builder();
-        HOLDERS.forEach((materialGroup, holder) -> {
+        BlockVariantGenerator.iterateOverGroups(materialGroup -> {
             BlockVariantGenerator.iterateOverVariants(materialGroup, (baseBlock, materialBlock) -> {
 
                 var baseId = Registries.BLOCK.getId(baseBlock);
@@ -117,6 +112,4 @@ public class BlockVariantTextureGenerator implements SimpleSynchronousResourceRe
         PACK.clear();
         map.forEach((key, value) -> PACK.addFileContents(ResourceType.CLIENT_RESOURCES, key, value));
     }
-
-    private record TextureVariantHolder(TextureVariantFactory textureFactory) {}
 }

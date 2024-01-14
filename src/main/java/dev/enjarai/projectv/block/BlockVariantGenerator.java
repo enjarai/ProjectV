@@ -5,14 +5,12 @@ import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
-import net.minecraft.entity.VariantHolder;
 import net.minecraft.item.BlockItem;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.tag.TagKey;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.Pair;
 import org.jetbrains.annotations.ApiStatus;
 
 import java.util.*;
@@ -105,6 +103,13 @@ public final class BlockVariantGenerator {
         }
     }
 
+    @ApiStatus.Internal
+    public static void iterateOverGroups(GroupConsumer consumer) {
+        for (var key : MATERIALS.keySet()) {
+            consumer.consume(key);
+        }
+    }
+
     @FunctionalInterface
     public interface VariantBlockFactory<V extends Block & VariantBlock> {
         V create(FabricBlockSettings settings);
@@ -118,6 +123,11 @@ public final class BlockVariantGenerator {
     @FunctionalInterface
     public interface BlocksConsumer {
         void consume(Set<Block> blocks, TagKey<Block> tag);
+    }
+
+    @FunctionalInterface
+    public interface GroupConsumer {
+        void consume(BlockMaterialGroup materialGroup);
     }
 
     private record BlockVariantHolder<O extends Block, V extends Block & VariantBlock>(O original, VariantBlockFactory<V> factory, TagKey<Block>[] tags) { }
