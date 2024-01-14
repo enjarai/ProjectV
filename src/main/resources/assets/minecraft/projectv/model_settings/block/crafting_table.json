@@ -1,0 +1,31 @@
+{
+  "textures": {
+    "down": {
+      "merge_function": {
+        "type": "projectv:original_material_texture"
+      }
+    },
+    "east": {
+      "base": "minecraft:block/crafting_table_side",
+      "merge_function": {
+        "type": "projectv:overlay"
+      }
+    },
+    "north": {
+      "base": "minecraft:block/crafting_table_front",
+      "merge_function": {
+        "type": "projectv:overlay"
+      }
+    },
+    "up": {
+      "base": "minecraft:block/crafting_table_top",
+      "merge_function": {
+        "type": "projectv:palette",
+        "key": "minecraft:oak_planks"
+      }
+    },
+    "particle": "north",
+    "south": "east",
+    "west": "north"
+  }
+}

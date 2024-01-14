@@ -1,6 +1,8 @@
 package dev.enjarai.projectv;
 
 import dev.enjarai.projectv.block.BlockVariantGenerator;
+import dev.enjarai.projectv.data.BlockVariantTagGenerator;
+import dev.enjarai.projectv.pack.PackAdderEvent;
 import net.fabricmc.api.ModInitializer;
 
 import net.minecraft.registry.Registry;
@@ -22,6 +24,12 @@ public class ProjectV implements ModInitializer {
 		// TODO entry points?
 
 		BlockVariantGenerator.registerVariants();
+
+		PackAdderEvent.EVENT.register((managerType, packs) -> packs.add(BlockVariantTagGenerator.PACK));
+	}
+
+	public static Identifier id(String path) {
+		return new Identifier(MOD_ID, path);
 	}
 
 	public static <T> Identifier constructVariantIdentifier(Registry<T> registry, T original, T material) {
@@ -30,7 +38,7 @@ public class ProjectV implements ModInitializer {
 
 		return new Identifier(
 				MOD_ID,
-				originalIdentifier.getNamespace() + '_' + originalIdentifier.getPath() + '-' + materialIdentifier.getNamespace() + '_' + materialIdentifier.getPath()
+				originalIdentifier.getNamespace() + '_' + originalIdentifier.getPath() + '_' + materialIdentifier.getNamespace() + '_' + materialIdentifier.getPath()
 		);
 	}
 }
