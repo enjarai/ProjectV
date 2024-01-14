@@ -21,7 +21,7 @@
       "base": "minecraft:block/crafting_table_top",
       "merge_function": {
         "type": "projectv:palette",
-        "key": "minecraft:material/block/oak_planks"
+        "key": "minecraft:oak_planks"
       }
     },
     "particle": "north",

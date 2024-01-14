@@ -33,7 +33,7 @@ public interface TextureVariantFactory {
         return (resourceManager, baseTexture, materialTextureSupplier) -> {
             var materialTexture = materialTextureSupplier.get("palette");
 
-            var paletteKeyResource = resourceManager.getResource(paletteKeyLocation.withPrefixedPath("projectv/").withSuffixedPath(".png"));
+            var paletteKeyResource = resourceManager.getResource(paletteKeyLocation.withPrefixedPath("projectv/material/block/palette/").withSuffixedPath(".png"));
             if (paletteKeyResource.isEmpty()) {
                 throw new RuntimeException("Could not find palette key '" + paletteKeyLocation + "'.");
             }
@@ -53,7 +53,7 @@ public interface TextureVariantFactory {
 
     static TextureUsing overlay() {
         return (resourceManager, baseTexture, materialTextureSupplier) -> {
-            var materialTexture = materialTextureSupplier.get("palette");
+            var materialTexture = materialTextureSupplier.get("base");
 
             var resultTexture = materialTexture.applyToCopy(IntUnaryOperator.identity());
             return ImageUtils.overlayImageWithTransparency(resultTexture, baseTexture);
