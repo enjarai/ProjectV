@@ -51,12 +51,12 @@ public class BlockVariantTextureGenerator implements SimpleSynchronousResourceRe
             BlockVariantGenerator.iterateOverVariants(materialGroup, (baseBlock, materialBlock) -> {
 
                 var baseTextureId = Registries.BLOCK.getId(baseBlock).withPrefixedPath("projectv/base_texture/block/").withSuffixedPath(".png");
-                var materialTextureId = Registries.BLOCK.getId(materialBlock).withPrefixedPath("projectv/material/block/").withSuffixedPath(".png");
+                var materialId = Registries.BLOCK.getId(materialBlock);
 
                 try {
                     var variantBlockId = ProjectV.constructVariantIdentifier(Registries.BLOCK, baseBlock, materialBlock);
 
-                    try (var generatedTexture = holder.textureFactory().createVariant(manager, baseTextureId, materialTextureId)) {
+                    try (var generatedTexture = holder.textureFactory().createVariant(manager, baseTextureId, s -> materialId.withPrefixedPath("projectv/material/block/" + s + "/").withSuffixedPath(".png"))) {
                         mapBuilder.put(variantBlockId.withPrefixedPath("textures/block/").withSuffixedPath(".png"), generatedTexture.getBytes());
                     }
                     // TODO multiple textures per block
@@ -77,7 +77,7 @@ public class BlockVariantTextureGenerator implements SimpleSynchronousResourceRe
                     // TODO yea you get it, need to make this dynamic
 
                 } catch (Exception e) {
-                    ProjectV.LOGGER.error(String.format("Failed to apply variant %s to %s:", materialTextureId, baseTextureId), e);
+                    ProjectV.LOGGER.error(String.format("Failed to apply variant %s to %s:", materialId, baseTextureId), e);
                 }
             });
         });
