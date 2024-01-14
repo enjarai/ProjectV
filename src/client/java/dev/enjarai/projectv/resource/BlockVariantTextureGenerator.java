@@ -26,26 +26,11 @@ import java.util.*;
  * <p>
  * TODO implement concurrency here?
  */
-public class BlockVariantTextureGenerator implements SimpleSynchronousResourceReloadListener {
+public class BlockVariantTextureGenerator {
     public static final RuntimePack PACK = RuntimePack.create("Project V: Block Variants", ResourceType.CLIENT_RESOURCES);
-    static {
-        PackAdderEvent.EVENT.register((managerType, packs) -> packs.add(PACK));
-    }
     public static final Identifier IDENTIFIER = new Identifier(ProjectV.MOD_ID, "block_variant_generator");
 
-
-    @Override
-    public Identifier getFabricId() {
-        return IDENTIFIER;
-    }
-
-    @Override
-    public Collection<Identifier> getFabricDependencies() {
-        return List.of(ResourceReloadListenerKeys.MODELS, ResourceReloadListenerKeys.TEXTURES);
-    }
-
-    @Override
-    public void reload(ResourceManager manager) {
+    public static void reload(ResourceManager manager) {
         var mapBuilder = ImmutableMap.<Identifier, byte[]>builder();
         BlockVariantGenerator.iterateOverGroups(materialGroup -> {
             BlockVariantGenerator.iterateOverVariants(materialGroup, (baseBlock, materialBlock) -> {

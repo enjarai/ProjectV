@@ -6,6 +6,7 @@ import dev.enjarai.projectv.pack.PackAdderEvent;
 import net.fabricmc.api.ModInitializer;
 
 import net.minecraft.registry.Registry;
+import net.minecraft.resource.ResourceType;
 import net.minecraft.util.Identifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,7 +26,11 @@ public class ProjectV implements ModInitializer {
 
 		BlockVariantGenerator.registerVariants();
 
-		PackAdderEvent.EVENT.register((managerType, packs) -> packs.add(BlockVariantTagGenerator.PACK));
+		PackAdderEvent.EVENT.register((managerType, packs) -> {
+			if (managerType == ResourceType.SERVER_DATA) {
+				packs.add(BlockVariantTagGenerator.PACK);
+			}
+		});
 	}
 
 	public static Identifier id(String path) {
