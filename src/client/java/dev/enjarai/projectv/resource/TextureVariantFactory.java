@@ -2,6 +2,7 @@ package dev.enjarai.projectv.resource;
 
 import com.mojang.serialization.Codec;
 import dev.enjarai.projectv.ProjectV;
+import dev.enjarai.projectv.ProjectVClient;
 import net.minecraft.client.texture.NativeImage;
 import net.minecraft.resource.ResourceManager;
 import net.minecraft.util.Identifier;
@@ -31,16 +32,16 @@ public interface TextureVariantFactory {
 
     static TextureUsing paletted(Identifier paletteKeyLocation) {
         return (resourceManager, baseTexture, materialTextureSupplier) -> {
-            var materialTexture = materialTextureSupplier.get("palette");
-
-            var paletteKeyResource = resourceManager.getResource(paletteKeyLocation.withPrefixedPath("projectv/material/block/palette/").withSuffixedPath(".png"));
-            if (paletteKeyResource.isEmpty()) {
-                throw new RuntimeException("Could not find palette key '" + paletteKeyLocation + "'.");
+            try (var materialTexture = materialTextureSupplier.get("palette")) {
+                var paletteKeyResource = resourceManager.getResource(paletteKeyLocation.withPrefixedPath("projectv/material/block/palette/").withSuffixedPath(".png"));
+                if (paletteKeyResource.isEmpty()) {
+                    throw new RuntimeException("Could not find palette key '" + paletteKeyLocation + "'.");
+                }
+                try (var paletteKeyTexture = NativeImage.read(paletteKeyResource.get().getInputStream())) {
+                    var resultTexture = baseTexture.applyToCopy(IntUnaryOperator.identity()); // don't close this one yet, returned again by paletteifyImage
+                    return ImageUtils.paletteifyImage(resultTexture, paletteKeyTexture, materialTexture);
+                }
             }
-            var paletteKeyTexture = NativeImage.read(paletteKeyResource.get().getInputStream());
-
-            var resultTexture = baseTexture.applyToCopy(IntUnaryOperator.identity());
-            return ImageUtils.paletteifyImage(resultTexture, paletteKeyTexture, materialTexture);
         };
     }
 
@@ -53,10 +54,10 @@ public interface TextureVariantFactory {
 
     static TextureUsing overlay() {
         return (resourceManager, baseTexture, materialTextureSupplier) -> {
-            var materialTexture = materialTextureSupplier.get("base");
-
-            var resultTexture = materialTexture.applyToCopy(IntUnaryOperator.identity());
-            return ImageUtils.overlayImageWithTransparency(resultTexture, baseTexture);
+            try (var materialTexture = materialTextureSupplier.get("base")) {
+                var resultTexture = materialTexture.applyToCopy(IntUnaryOperator.identity()); // don't close this one either, also returned
+                return ImageUtils.overlayImageWithTransparency(resultTexture, baseTexture);
+            }
         };
     }
 
@@ -67,15 +68,17 @@ public interface TextureVariantFactory {
     interface TextureUsing extends TextureVariantFactory {
         @Override
         default NativeImage createVariant(ResourceManager resourceManager, Identifier baseTextureId, StringToSomething<Identifier> materialTextureIdSupplier) throws IOException {
-            return createVariantWithImages(
-                    resourceManager,
-                    NativeImage.read(resourceManager.getResource(baseTextureId).orElseThrow(() -> new IOException("Base texture could not be loaded: " + baseTextureId)).getInputStream()),
-                    s -> {
-                        var textureId = materialTextureIdSupplier.get(s);
-                        return NativeImage.read(resourceManager.getResource(textureId)
-                                .orElseThrow(() -> new IOException("Material texture could not be loaded: " + textureId)).getInputStream());
-                    }
-            );
+            try (var baseTexture = NativeImage.read(resourceManager.getResource(baseTextureId).orElseThrow(() -> new IOException("Base texture could not be loaded: " + baseTextureId)).getInputStream())) {
+                return createVariantWithImages(
+                        resourceManager,
+                        baseTexture,
+                        s -> {
+                            var textureId = materialTextureIdSupplier.get(s);
+                            return NativeImage.read(resourceManager.getResource(textureId)
+                                    .orElseThrow(() -> new IOException("Material texture could not be loaded: " + textureId)).getInputStream());
+                        }
+                );
+            }
         }
 
         NativeImage createVariantWithImages(ResourceManager resourceManager, NativeImage baseTexture, StringToSomething<NativeImage> materialTextureSupplier) throws IOException;
