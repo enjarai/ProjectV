@@ -37,10 +37,11 @@ public interface TextureVariantFactory {
             if (paletteKeyResource.isEmpty()) {
                 throw new RuntimeException("Could not find palette key '" + paletteKeyLocation + "'.");
             }
-            var paletteKeyTexture = NativeImage.read(paletteKeyResource.get().getInputStream());
 
-            var resultTexture = baseTexture.applyToCopy(IntUnaryOperator.identity());
-            return ImageUtils.paletteifyImage(resultTexture, paletteKeyTexture, materialTexture);
+            try (var paletteKeyTexture = NativeImage.read(paletteKeyResource.get().getInputStream())) {
+                var resultTexture = baseTexture.applyToCopy(IntUnaryOperator.identity());
+                return ImageUtils.paletteifyImage(resultTexture, paletteKeyTexture, materialTexture);
+            }
         };
     }
 
@@ -53,10 +54,12 @@ public interface TextureVariantFactory {
 
     static TextureUsing overlay() {
         return (resourceManager, baseTexture, materialTextureSupplier) -> {
-            var materialTexture = materialTextureSupplier.get("base");
+            try (baseTexture) {
+                var materialTexture = materialTextureSupplier.get("base");
 
-            var resultTexture = materialTexture.applyToCopy(IntUnaryOperator.identity());
-            return ImageUtils.overlayImageWithTransparency(resultTexture, baseTexture);
+                var resultTexture = materialTexture.applyToCopy(IntUnaryOperator.identity());
+                return ImageUtils.overlayImageWithTransparency(resultTexture, baseTexture);
+            }
         };
     }
 
