@@ -107,7 +107,7 @@ public class BlockVariantTextureGenerator {
         map.forEach((key, value) -> PACK.addFileContents(ResourceType.CLIENT_RESOURCES, key, value));
     }
 
-    private JsonElement mapBlockStateModelsCached(JsonElement blockStateJson, ModelIdMapper mapper) {
+    private static JsonElement mapBlockStateModelsCached(JsonElement blockStateJson, ModelIdMapper mapper) {
         var cache = new HashMap<Identifier, Identifier>();
         ModelIdMapper internalMapper = id -> {
             if (cache.containsKey(id)) return cache.get(id);
