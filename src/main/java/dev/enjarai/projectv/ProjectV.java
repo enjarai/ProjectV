@@ -1,10 +1,12 @@
 package dev.enjarai.projectv;
 
 import dev.enjarai.projectv.block.BlockVariantGenerator;
+import dev.enjarai.projectv.block.VariantBlock;
 import dev.enjarai.projectv.data.BlockVariantTagGenerator;
 import dev.enjarai.projectv.pack.PackAdderEvent;
 import net.fabricmc.api.ModInitializer;
 
+import net.minecraft.block.Block;
 import net.minecraft.registry.Registry;
 import net.minecraft.resource.ResourceType;
 import net.minecraft.util.Identifier;
@@ -45,5 +47,13 @@ public class ProjectV implements ModInitializer {
 				MOD_ID,
 				originalIdentifier.getNamespace() + '_' + originalIdentifier.getPath() + '_' + materialIdentifier.getNamespace() + '_' + materialIdentifier.getPath()
 		);
+	}
+
+	public static Block a(Block block) {
+		//if(true)return null;
+		if(block instanceof VariantBlock variantBlock) {
+			return variantBlock.getBaseBlock();
+		}
+		return null;
 	}
 }

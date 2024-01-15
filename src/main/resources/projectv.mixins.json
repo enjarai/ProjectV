@@ -3,8 +3,8 @@
   "package": "dev.enjarai.projectv.mixin",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
+    "AbstractBlockMixin",
     "LifecycledResourceManagerImplMixin",
-    "ScreenHandlerMixin",
     "TagManagerLoaderMixin"
   ],
   "injectors": {
