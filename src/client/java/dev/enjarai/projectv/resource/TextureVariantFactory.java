@@ -2,7 +2,6 @@ package dev.enjarai.projectv.resource;
 
 import com.mojang.serialization.Codec;
 import dev.enjarai.projectv.ProjectV;
-import dev.enjarai.projectv.ProjectVClient;
 import net.minecraft.client.texture.NativeImage;
 import net.minecraft.resource.ResourceManager;
 import net.minecraft.util.Identifier;
