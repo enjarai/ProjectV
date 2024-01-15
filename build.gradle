@@ -35,6 +35,12 @@ loom {
 		}
 	}
 
+	runs {
+		client {
+			property("org.lwjgl.util.DebugAllocator", "true")
+		}
+	}
+
 }
 
 dependencies {
