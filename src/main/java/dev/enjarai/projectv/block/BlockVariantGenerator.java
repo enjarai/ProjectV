@@ -5,6 +5,7 @@ import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
+import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.item.BlockItem;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
@@ -32,6 +33,11 @@ public final class BlockVariantGenerator {
         }
 
         HOLDERS.computeIfAbsent(materialGroup, ignored -> new HashSet<>()).add(new BlockVariantHolder<>(original, factory, tags));
+    }
+
+    @SafeVarargs
+    public static <O extends Block, V extends Block & VariantBlock> void addVariant(O original, ExtendedVariantBlockFactory<O, V> factory, BlockMaterialGroup materialGroup, TagKey<Block>... tags) {
+        addVariant(original, settings -> factory.create(settings, original), materialGroup, tags);
     }
 
     public static void addMaterials(BlockMaterialGroup group, Block... blocks) {
@@ -113,6 +119,11 @@ public final class BlockVariantGenerator {
     @FunctionalInterface
     public interface VariantBlockFactory<V extends Block & VariantBlock> {
         V create(FabricBlockSettings settings);
+    }
+
+    @FunctionalInterface
+    public interface ExtendedVariantBlockFactory<O extends Block, V extends Block & VariantBlock> {
+        V create(FabricBlockSettings settings, O original);
     }
 
     @FunctionalInterface
