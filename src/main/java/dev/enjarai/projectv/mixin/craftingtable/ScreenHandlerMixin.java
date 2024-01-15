@@ -1,4 +1,4 @@
-package dev.enjarai.projectv.mixin;
+package dev.enjarai.projectv.mixin.craftingtable;
 
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
