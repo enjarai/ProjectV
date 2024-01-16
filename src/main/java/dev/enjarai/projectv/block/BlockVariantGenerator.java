@@ -8,6 +8,7 @@ import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
 import net.minecraft.item.BlockItem;
+import net.minecraft.item.Item;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
@@ -92,7 +93,7 @@ public final class BlockVariantGenerator {
     }
 
     private static void registerVariant(Block materialBlock, BlockVariantHolder<?, ?> holder) {
-        var block = holder.factory.create(FabricBlockSettings.copyOf(materialBlock));
+        var block = holder.factory.create(FabricBlockSettings.copyOf(holder.original));
         var identifier = ProjectV.constructVariantIdentifier(Registries.BLOCK, holder.original, materialBlock);
 
         for (var tag : holder.tags) {
