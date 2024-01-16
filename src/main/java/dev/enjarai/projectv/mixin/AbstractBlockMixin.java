@@ -16,11 +16,11 @@ public abstract class AbstractBlockMixin {
             method = "isOf",
             at = @At("RETURN")
     )
-    public boolean a(boolean original, Block block) {
-        return original || areRelated(block);
+    public boolean isOfVariantAware(boolean original, Block block) {
+        return original || isVariantOf(block);
     }
 
-    private boolean areRelated(Block block) {
+    private boolean isVariantOf(Block block) {
         Block block1 = block;
         if(block1 instanceof VariantBlock variantBlock) {
             block1 = variantBlock.getBaseBlock();
