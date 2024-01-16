@@ -53,6 +53,9 @@ public final class BlockVariantGenerator {
                 getTag(new Identifier("c", "workbench")),
                 getTag(new Identifier("c", "crafting_tables")),
                 getTag(new Identifier("minecraft", "mineable/axe")));
+        addVariant(Blocks.LECTERN, VariantLecternBlock::new, BlockMaterialGroup.PLANKS,
+                getTag(new Identifier("c", "lecterns")),
+                getTag(new Identifier("minecraft", "mineable/axe")));
 
         addVariant(Blocks.DIAMOND_ORE, BasicVariantBlock::new, BlockMaterialGroup.STONE,
                 getTag(new Identifier("minecraft", "diamond_ores")),
