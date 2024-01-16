@@ -1,0 +1,11 @@
+{
+  "textures": {
+    "torch": {
+      "base": "minecraft:block/torch",
+      "merge_function": {
+        "type": "projectv:palette",
+        "key": "minecraft:oak_planks"
+      }
+    }
+  }
+}

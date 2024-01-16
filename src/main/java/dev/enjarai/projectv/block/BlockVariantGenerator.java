@@ -1,11 +1,14 @@
 package dev.enjarai.projectv.block;
 
 import dev.enjarai.projectv.ProjectV;
+import net.fabricmc.api.EnvType;
 import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
 import net.minecraft.item.BlockItem;
+import net.minecraft.particle.ParticleTypes;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.registry.RegistryKeys;
@@ -16,6 +19,8 @@ import net.minecraft.world.poi.PointOfInterestTypes;
 import org.jetbrains.annotations.ApiStatus;
 
 import java.util.*;
+
+import static net.minecraft.registry.tag.BlockTags.WALL_POST_OVERRIDE;
 
 public final class BlockVariantGenerator {
 
@@ -57,6 +62,10 @@ public final class BlockVariantGenerator {
         addVariant(Blocks.LECTERN, VariantLecternBlock::new, BlockMaterialGroup.PLANKS,
                 getTag(new Identifier("c", "lecterns")),
                 getTag(new Identifier("minecraft", "mineable/axe")));
+        addVariant(Blocks.TORCH, settings -> new VariantTorchBlock(settings, ParticleTypes.FLAME), BlockMaterialGroup.PLANKS,
+                WALL_POST_OVERRIDE,
+                //TODO: Does this exist?
+                getTag(new Identifier("c", "torches")));
 
         addVariant(Blocks.DIAMOND_ORE, BasicVariantBlock::new, BlockMaterialGroup.STONE,
                 getTag(new Identifier("minecraft", "diamond_ores")),
