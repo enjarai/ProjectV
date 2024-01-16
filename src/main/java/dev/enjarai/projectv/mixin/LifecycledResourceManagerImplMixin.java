@@ -1,4 +1,4 @@
-package dev.enjarai.projectv.mixin.client;
+package dev.enjarai.projectv.mixin;
 
 import dev.enjarai.projectv.pack.PackAdderEvent;
 import net.minecraft.resource.LifecycledResourceManagerImpl;

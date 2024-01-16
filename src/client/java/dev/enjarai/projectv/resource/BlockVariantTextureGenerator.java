@@ -28,31 +28,13 @@ import java.util.concurrent.atomic.AtomicReference;
  * <p>
  * TODO implement concurrency here?
  */
-public class BlockVariantTextureGenerator implements SimpleSynchronousResourceReloadListener {
+public class BlockVariantTextureGenerator {
     public static final RuntimePack PACK = RuntimePack.create("Project V: Block Variants", ResourceType.CLIENT_RESOURCES);
-
-    static {
-        PackAdderEvent.EVENT.register((managerType, packs) -> packs.add(PACK));
-    }
-
     public static final Identifier IDENTIFIER = new Identifier(ProjectV.MOD_ID, "block_variant_generator");
 
-
-    @Override
-    public Identifier getFabricId() {
-        return IDENTIFIER;
-    }
-
-    @Override
-    public Collection<Identifier> getFabricDependencies() {
-        return List.of(ResourceReloadListenerKeys.MODELS, ResourceReloadListenerKeys.TEXTURES);
-    }
-
-    @Override
-    public void reload(ResourceManager manager) {
+    public static void reload(ResourceManager manager) {
         ProjectV.LOGGER.info("Generating variant textures and models...");
         var startTime = System.currentTimeMillis();
-
         var mapBuilder = ImmutableMap.<Identifier, byte[]>builder();
         BlockVariantGenerator.iterateOverGroups(materialGroup -> {
             BlockVariantGenerator.iterateOverVariants(materialGroup, (baseBlock, materialBlock) -> {
@@ -126,12 +108,11 @@ public class BlockVariantTextureGenerator implements SimpleSynchronousResourceRe
 
         var timeElapsed = System.currentTimeMillis() - startTime;
         ProjectV.LOGGER.info("Done! Generated {} files, took {} ms.", map.size(), timeElapsed);
-
         PACK.clear();
         map.forEach((key, value) -> PACK.addFileContents(ResourceType.CLIENT_RESOURCES, key, value));
     }
 
-    private JsonElement mapBlockStateModelsCached(JsonElement blockStateJson, ModelIdMapper mapper) {
+    private static JsonElement mapBlockStateModelsCached(JsonElement blockStateJson, ModelIdMapper mapper) {
         var cache = new HashMap<Identifier, Identifier>();
         ModelIdMapper internalMapper = id -> {
             if (cache.containsKey(id)) return cache.get(id);

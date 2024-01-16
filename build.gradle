@@ -35,6 +35,12 @@ loom {
 		}
 	}
 
+	runs {
+		client {
+			property("org.lwjgl.util.DebugAllocator", "true")
+		}
+	}
+
 }
 
 dependencies {
@@ -45,6 +51,8 @@ dependencies {
 
 	// Fabric API. This is technically optional, but you probably want it anyway.
 	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
+
+	include(modImplementation("dev.kikugie:crash-pipe:0.1.0"))
 }
 
 processResources {

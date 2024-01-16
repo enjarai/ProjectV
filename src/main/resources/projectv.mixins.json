@@ -6,7 +6,10 @@
     "BlockEntityTypeMixin",
     "TagManagerLoaderMixin",
     "craftingtable.ScreenHandlerMixin",
-    "lectern.BothBookItemMixin"
+    "lectern.BothBookItemMixin",
+    "LifecycledResourceManagerImplMixin",
+    "ScreenHandlerMixin",
+    "TagManagerLoaderMixin"
   ],
   "injectors": {
     "defaultRequire": 1
