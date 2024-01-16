@@ -29,6 +29,7 @@
 			"environment": "client"
 		}
 	],
+	"accessWidener": "projectv.accesswidener",
 	"depends": {
 		"fabricloader": ">=0.15.3",
 		"minecraft": "~1.20.1",

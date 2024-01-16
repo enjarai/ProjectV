@@ -8,7 +8,6 @@
     "craftingtable.ScreenHandlerMixin",
     "lectern.BothBookItemMixin",
     "LifecycledResourceManagerImplMixin",
-    "ScreenHandlerMixin",
     "TagManagerLoaderMixin"
   ],
   "injectors": {

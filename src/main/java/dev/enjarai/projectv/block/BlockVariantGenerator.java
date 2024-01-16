@@ -5,13 +5,14 @@ import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
-import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.item.BlockItem;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.tag.TagKey;
 import net.minecraft.util.Identifier;
+import net.minecraft.world.poi.PointOfInterestType;
+import net.minecraft.world.poi.PointOfInterestTypes;
 import org.jetbrains.annotations.ApiStatus;
 
 import java.util.*;
@@ -91,6 +92,25 @@ public final class BlockVariantGenerator {
 
         Registry.register(Registries.BLOCK, identifier, block);
         Registry.register(Registries.ITEM, identifier, new BlockItem(block, new FabricItemSettings()));
+
+        for (var poiTypeKey : block.getPoiTypes()) {
+            var poiTypeEntry = Registries.POINT_OF_INTEREST_TYPE.getEntry(poiTypeKey)
+                    .orElseThrow(() -> new IllegalArgumentException("Incorrect POI type registry key given by variant block: " + identifier));
+            var poiType = poiTypeEntry.value();
+
+            // Get all possible blockstates for our block
+            var allStates = block.getStateManager().getStates();
+
+            // Carefully modify a record field to add our states :trolley:
+            var poiStates = new HashSet<>(poiType.blockStates);
+            poiStates.addAll(allStates);
+            poiType.blockStates = poiStates;
+
+            // Add the same states to the poitypes reverse lookup hashmap
+            for (var state : allStates) {
+                PointOfInterestTypes.POI_STATES_TO_TYPE.put(state, poiTypeEntry);
+            }
+        }
     }
 
     @ApiStatus.Internal
