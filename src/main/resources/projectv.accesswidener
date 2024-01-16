@@ -1,0 +1,7 @@
+accessWidener v2 named
+
+# JVM trolling to make POI's work
+accessible field net/minecraft/world/poi/PointOfInterestType blockStates Ljava/util/Set;
+mutable field net/minecraft/world/poi/PointOfInterestType blockStates Ljava/util/Set;
+
+accessible field net/minecraft/world/poi/PointOfInterestTypes POI_STATES_TO_TYPE Ljava/util/Map;

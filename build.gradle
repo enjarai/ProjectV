@@ -41,6 +41,7 @@ loom {
 		}
 	}
 
+	accessWidenerPath = file("src/main/resources/projectv.accesswidener")
 }
 
 dependencies {
