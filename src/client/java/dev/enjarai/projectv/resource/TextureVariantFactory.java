@@ -16,6 +16,7 @@ public interface TextureVariantFactory {
     Map<Identifier, Codec<? extends TextureVariantFactory>> ALL = Map.of(
             ProjectV.id("dummy"), Codec.INT.fieldOf("color").xmap(TextureVariantFactory::dummy, f -> null).codec(),
             ProjectV.id("palette"), Identifier.CODEC.fieldOf("key").xmap(TextureVariantFactory::paletted, f -> null).codec(),
+            ProjectV.id("torch_palette"), Identifier.CODEC.fieldOf("key").xmap(TextureVariantFactory::paletted, f -> null).codec(),
             ProjectV.id("original_material_texture"), Codec.unit(originalMaterialTexture()),
             ProjectV.id("overlay"), Codec.unit(overlay())
     );
@@ -33,6 +34,21 @@ public interface TextureVariantFactory {
         return (resourceManager, baseTexture, materialTextureSupplier) -> {
             try (var materialTexture = materialTextureSupplier.get("palette")) {
                 var paletteKeyResource = resourceManager.getResource(paletteKeyLocation.withPrefixedPath("projectv/material/block/palette/").withSuffixedPath(".png"));
+                if (paletteKeyResource.isEmpty()) {
+                    throw new RuntimeException("Could not find palette key '" + paletteKeyLocation + "'.");
+                }
+                try (var paletteKeyTexture = NativeImage.read(paletteKeyResource.get().getInputStream())) {
+                    var resultTexture = baseTexture.applyToCopy(IntUnaryOperator.identity()); // don't close this one yet, returned again by paletteifyImage
+                    return ImageUtils.paletteifyImage(resultTexture, paletteKeyTexture, materialTexture);
+                }
+            }
+        };
+    }
+
+    static TextureUsing palettedTorch(Identifier paletteKeyLocation) {
+        return (resourceManager, baseTexture, materialTextureSupplier) -> {
+            try (var materialTexture = materialTextureSupplier.get("palette")) {
+                var paletteKeyResource = resourceManager.getResource(paletteKeyLocation.withPrefixedPath("projectv/material/block/palette/torch/").withSuffixedPath(".png"));
                 if (paletteKeyResource.isEmpty()) {
                     throw new RuntimeException("Could not find palette key '" + paletteKeyLocation + "'.");
                 }
