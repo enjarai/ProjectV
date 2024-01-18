@@ -5,7 +5,14 @@
   "mixins": [
     "LifecycledResourceManagerImplMixin",
     "ScreenHandlerMixin",
-    "TagManagerLoaderMixin"
+    "TagManagerLoaderMixin",
+    "item.ClickSlotC2SPacketMixin",
+    "item.ItemMixin",
+    "item.ItemStackArgumentMixin",
+    "item.ItemStackMixin",
+    "item.PlayerInventoryMixin",
+    "item.ScreenHandlerMixin",
+    "item.ServerPlayNetworkHandlerMixin"
   ],
   "injectors": {
     "defaultRequire": 1

@@ -3,10 +3,13 @@
   "package": "dev.enjarai.projectv.mixin.client",
   "compatibilityLevel": "JAVA_17",
   "client": [
-    "BakedModelManagerMixin"
+    "BakedModelManagerMixin",
+    "item.ClientPlayerInteractionManagerMixin",
+    "item.HandledScreenMixin"
   ],
   "injectors": {
     "defaultRequire": 1
   },
-  "mixins": []
+  "mixins": [
+  ]
 }
