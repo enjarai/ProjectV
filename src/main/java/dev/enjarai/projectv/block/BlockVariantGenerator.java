@@ -101,6 +101,7 @@ public final class BlockVariantGenerator {
             // Get all possible blockstates for our block
             var allStates = block.getStateManager().getStates();
 
+            // TODO optimise this poggus
             // Carefully modify a record field to add our states :trolley:
             var poiStates = new HashSet<>(poiType.blockStates);
             poiStates.addAll(allStates);
