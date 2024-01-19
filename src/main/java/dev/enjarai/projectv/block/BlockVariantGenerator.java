@@ -11,7 +11,6 @@ import net.minecraft.registry.Registry;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.tag.TagKey;
 import net.minecraft.util.Identifier;
-import net.minecraft.world.poi.PointOfInterestType;
 import net.minecraft.world.poi.PointOfInterestTypes;
 import org.jetbrains.annotations.ApiStatus;
 
@@ -83,7 +82,10 @@ public final class BlockVariantGenerator {
     }
 
     private static void registerVariant(Block materialBlock, BlockVariantHolder<?, ?> holder) {
-        var block = holder.factory.create(FabricBlockSettings.copyOf(materialBlock));
+        var block = holder.factory.create(
+                //TODO: Find better System to do this. Can't be in VariantBlock as isn't available yet
+                FabricBlockSettings.copyOf(holder.original).sounds(materialBlock.getSoundGroup(materialBlock.getDefaultState()))
+        );
         var identifier = ProjectV.constructVariantIdentifier(Registries.BLOCK, holder.original, materialBlock);
 
         for (var tag : holder.tags) {
@@ -101,6 +103,7 @@ public final class BlockVariantGenerator {
             // Get all possible blockstates for our block
             var allStates = block.getStateManager().getStates();
 
+            // TODO optimise this poggus
             // Carefully modify a record field to add our states :trolley:
             var poiStates = new HashSet<>(poiType.blockStates);
             poiStates.addAll(allStates);
@@ -142,11 +145,6 @@ public final class BlockVariantGenerator {
     @FunctionalInterface
     public interface VariantBlockFactory<V extends Block & VariantBlock> {
         V create(FabricBlockSettings settings);
-    }
-
-    @FunctionalInterface
-    public interface ExtendedVariantBlockFactory<O extends Block, V extends Block & VariantBlock> {
-        V create(FabricBlockSettings settings, O original);
     }
 
     @FunctionalInterface
