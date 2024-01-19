@@ -33,6 +33,8 @@ public class BlockVariantTextureGenerator {
     public static final Identifier IDENTIFIER = new Identifier(ProjectV.MOD_ID, "block_variant_generator");
 
     public static void reload(ResourceManager manager) {
+        ProjectV.LOGGER.info("Generating variant textures and models...");
+        var startTime = System.currentTimeMillis();
         var mapBuilder = ImmutableMap.<Identifier, byte[]>builder();
         BlockVariantGenerator.iterateOverGroups(materialGroup -> {
             BlockVariantGenerator.iterateOverVariants(materialGroup, (baseBlock, materialBlock) -> {
@@ -103,6 +105,9 @@ public class BlockVariantTextureGenerator {
             });
         });
         var map = mapBuilder.buildKeepingLast();
+
+        var timeElapsed = System.currentTimeMillis() - startTime;
+        ProjectV.LOGGER.info("Done! Generated {} files, took {} ms.", map.size(), timeElapsed);
         PACK.clear();
         map.forEach((key, value) -> PACK.addFileContents(ResourceType.CLIENT_RESOURCES, key, value));
     }
