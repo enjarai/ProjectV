@@ -148,6 +148,11 @@ public final class BlockVariantGenerator {
     }
 
     @FunctionalInterface
+    public interface ExtendedVariantBlockFactory<O extends Block, V extends Block & VariantBlock> {
+        V create(FabricBlockSettings settings, O original);
+    }
+
+    @FunctionalInterface
     public interface VariantConsumer {
         void consume(Block baseBlock, Block materialBlock);
     }
