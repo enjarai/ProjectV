@@ -6,7 +6,6 @@
     "AbstractBlockMixin",
     "BlockEntityTypeMixin",
     "LifecycledResourceManagerImplMixin",
-    "ScreenHandlerMixin",
     "TagManagerLoaderMixin"
   ],
   "injectors": {
