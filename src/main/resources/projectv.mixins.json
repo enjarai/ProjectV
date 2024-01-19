@@ -7,6 +7,7 @@
     "ScreenHandlerMixin",
     "TagManagerLoaderMixin",
     "item.ClickSlotC2SPacketMixin",
+    "item.ItemEntityMixin",
     "item.ItemMixin",
     "item.ItemStackArgumentMixin",
     "item.ItemStackMixin",

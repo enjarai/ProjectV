@@ -10,6 +10,8 @@ public interface ItemStackExtender {
      */
     Item projectV$getTrueItem();
 
+    void projectV$setItem(Item item);
+
     VariantItemStack projectV$toVariantItemStack();
 
     /**
@@ -18,4 +20,5 @@ public interface ItemStackExtender {
     static boolean sameItem(ItemStack stack1, ItemStack stack2) {
         return ((ItemStackExtender) stack1).projectV$getTrueItem() == ((ItemStackExtender) stack2).projectV$getTrueItem();
     }
+
 }

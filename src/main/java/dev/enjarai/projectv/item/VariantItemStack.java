@@ -79,6 +79,10 @@ public class VariantItemStack extends ItemStack {
         validate();
     }
 
+    public ItemStack toItemStack() {
+        return new ItemStack(getItem(), getCount());
+    }
+
     private void validate() {
         if(isEmpty()) return;
         if(!(getItem() instanceof VariantItem)) {
@@ -238,6 +242,17 @@ public class VariantItemStack extends ItemStack {
         return accept(new ItemStack(item, count));
     }
 
+    public void setItem(Item item) {
+        if(item == getItem()) return;
+        if(!(item instanceof VariantItem variantItem)) {
+            throw new IllegalArgumentException("Item must be a VariantItem");
+        }
+        if(!isEmpty() && variantItem.getOriginal() != getOriginal()) {
+            throw new IllegalArgumentException("Item must be a variant of the original item");
+        }
+        ((ItemStackExtender) this).projectV$setItem(item);
+    }
+
     @Override
     public NbtCompound writeNbt(NbtCompound nbt) {
         NbtList variantsNbt = new NbtList();
@@ -273,6 +288,11 @@ public class VariantItemStack extends ItemStack {
 
         public ItemStack getVariant(Item item) {
             return stream().filter((stack) -> stack.getItem() == item).findFirst().orElse(null);
+        }
+
+        public ItemStack next() {
+            if(isEmpty()) return ItemStack.EMPTY;
+            return remove(0);
         }
 
         @Override

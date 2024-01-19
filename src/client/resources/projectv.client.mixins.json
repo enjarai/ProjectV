@@ -5,6 +5,7 @@
   "client": [
     "BakedModelManagerMixin",
     "item.ClientPlayerInteractionManagerMixin",
+    "item.DrawContentMixin",
     "item.HandledScreenMixin"
   ],
   "injectors": {
