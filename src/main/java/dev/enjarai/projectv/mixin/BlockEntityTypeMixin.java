@@ -1,5 +1,6 @@
 package dev.enjarai.projectv.mixin;
 
+import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import dev.enjarai.projectv.block.VariantBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
@@ -8,7 +9,6 @@ import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.Set;
@@ -22,14 +22,11 @@ public class BlockEntityTypeMixin {
     @Final
     private Set<Block> blocks;
 
-    @Inject(
+    @ModifyReturnValue(
             method = "supports",
-            at = @At("HEAD"),
-            cancellable = true
+            at = @At("RETURN")
     )
-    private void addSupportedBlocks(BlockState state, CallbackInfoReturnable<Boolean> cir) {
-        if (state.getBlock() instanceof VariantBlock variantBlock && blocks.contains(variantBlock.getBaseBlock())) {
-            cir.setReturnValue(true);
-        }
+    private boolean addSupportedBlocks(boolean original, BlockState state) {
+        return original || state.getBlock() instanceof VariantBlock variantBlock && this.blocks.contains(variantBlock.getBaseBlock());
     }
 }
