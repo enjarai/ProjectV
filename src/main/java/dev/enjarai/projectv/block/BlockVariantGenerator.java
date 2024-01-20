@@ -57,6 +57,9 @@ public final class BlockVariantGenerator {
         addVariant(Blocks.LECTERN, VariantLecternBlock::new, BlockMaterialGroup.PLANKS,
                 getTag(new Identifier("c", "lecterns")),
                 getTag(new Identifier("minecraft", "mineable/axe")));
+        addVariant(Blocks.CHEST, VariantChestBlock::new, BlockMaterialGroup.PLANKS,
+                getTag(new Identifier("c", "chests")),
+                getTag(new Identifier("minecraft", "mineable/axe")));
 
         addVariant(Blocks.DIAMOND_ORE, BasicVariantBlock::new, BlockMaterialGroup.STONE,
                 getTag(new Identifier("minecraft", "diamond_ores")),
