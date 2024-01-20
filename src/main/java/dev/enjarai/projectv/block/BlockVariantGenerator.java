@@ -46,8 +46,9 @@ public final class BlockVariantGenerator {
 
     @ApiStatus.Internal
     public static void addDefaultVariants() {
-        addMaterials(BlockMaterialGroup.PLANKS, Blocks.ACACIA_PLANKS, Blocks.BAMBOO_PLANKS, Blocks.BIRCH_PLANKS, Blocks.CHERRY_PLANKS, Blocks.BAMBOO_PLANKS, Blocks.JUNGLE_PLANKS, Blocks.CRIMSON_PLANKS, Blocks.DARK_OAK_PLANKS, Blocks.OAK_PLANKS, Blocks.WARPED_PLANKS, Blocks.MANGROVE_PLANKS, Blocks.SPRUCE_PLANKS);
-        addMaterials(BlockMaterialGroup.STONE, Blocks.STONE, Blocks.BLACKSTONE, Blocks.DEEPSLATE, Blocks.ANDESITE, Blocks.DIORITE, Blocks.GRANITE, Blocks.NETHERRACK, Blocks.END_STONE, Blocks.TUFF, Blocks.BASALT); // TODO prolly more?
+        addMaterials(BlockMaterialGroup.PLANKS, Blocks.ACACIA_PLANKS, Blocks.BIRCH_PLANKS, Blocks.CHERRY_PLANKS, Blocks.BAMBOO_PLANKS, Blocks.JUNGLE_PLANKS, Blocks.CRIMSON_PLANKS, Blocks.DARK_OAK_PLANKS, Blocks.OAK_PLANKS, Blocks.WARPED_PLANKS, Blocks.MANGROVE_PLANKS, Blocks.SPRUCE_PLANKS);
+        addMaterials(BlockMaterialGroup.STONES, Blocks.STONE, Blocks.BLACKSTONE, Blocks.DEEPSLATE, Blocks.ANDESITE, Blocks.DIORITE, Blocks.GRANITE, Blocks.NETHERRACK, Blocks.END_STONE, Blocks.TUFF, Blocks.BASALT); // TODO prolly more?
+        addMaterials(BlockMaterialGroup.NATURAL_LOGS, Blocks.ACACIA_LOG, Blocks.BIRCH_LOG, Blocks.CHERRY_LOG, Blocks.JUNGLE_LOG, Blocks.MANGROVE_LOG, Blocks.DARK_OAK_LOG, Blocks.OAK_LOG, Blocks.SPRUCE_LOG, Blocks.CRIMSON_HYPHAE, Blocks.WARPED_HYPHAE);
 
         addVariant(Blocks.CRAFTING_TABLE, VariantCraftingTableBlock::new, BlockMaterialGroup.PLANKS,
                 getTag(new Identifier("c", "workbench")),
@@ -57,7 +58,7 @@ public final class BlockVariantGenerator {
                 getTag(new Identifier("c", "lecterns")),
                 getTag(new Identifier("minecraft", "mineable/axe")));
 
-        addVariant(Blocks.DIAMOND_ORE, BasicVariantBlock::new, BlockMaterialGroup.STONE,
+        addVariant(Blocks.DIAMOND_ORE, BasicVariantBlock::new, BlockMaterialGroup.STONES,
                 getTag(new Identifier("minecraft", "diamond_ores")),
                 getTag(new Identifier("c", "ores")),
                 getTag(new Identifier("minecraft", "mineable/pickaxe")));
