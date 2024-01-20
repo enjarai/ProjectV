@@ -12,7 +12,7 @@ public record BlockMaterialGroup(Identifier identifier) {
 
     /**
      * Planks of any type of wood or wood-like material.
-     * <br>
+     * <br><br>
      * Bamboo planks are categorised under this material group as well.
      */
     public static final BlockMaterialGroup PLANKS = new BlockMaterialGroup(new Identifier(ProjectV.MOD_ID, "planks"));
@@ -22,9 +22,21 @@ public record BlockMaterialGroup(Identifier identifier) {
     public static final BlockMaterialGroup STONES = new BlockMaterialGroup(new Identifier(ProjectV.MOD_ID, "stone"));
     /**
      * Natural (non-stripped) logs of what can be considered a tree or tree-like plant.
-     * <br>
-     * Nether fungi hyphae are categorised under this material group as well, bamboo is not due to its special shape and properties.
+     * <br><br>
+     * Nether fungi hyphae are categorised under this material group as well, bamboo should not due to its special shape and properties.
      */
     public static final BlockMaterialGroup NATURAL_LOGS = new BlockMaterialGroup(new Identifier(ProjectV.MOD_ID, "logs"));
 
+    /**
+     * Compressed block of anything that counts as a metal, usually made out of ingots of that metal.
+     * <br><br>
+     * Usually metals are quite expensive, so this material group could be used for balancing.
+     * Minerals like diamond, redstone or lapis lazuli should not be found here, but netherite for example is due to having an ingot.
+     */
+    public static final BlockMaterialGroup REFINED_METALS = new BlockMaterialGroup(new Identifier(ProjectV.MOD_ID, "refined_metals"));
+
+    /**
+     * Types of what can be considered wool with varying colors and perhaps origins.
+     */
+    public static final BlockMaterialGroup WOOL = new BlockMaterialGroup(new Identifier(ProjectV.MOD_ID, "wool"));
 }
