@@ -50,7 +50,8 @@ public final class BlockVariantGenerator {
                 Blocks.BAMBOO_PLANKS, Blocks.JUNGLE_PLANKS, Blocks.CRIMSON_PLANKS, Blocks.DARK_OAK_PLANKS,
                 Blocks.OAK_PLANKS, Blocks.WARPED_PLANKS, Blocks.MANGROVE_PLANKS, Blocks.SPRUCE_PLANKS);
         addMaterials(BlockMaterialGroup.STONES, Blocks.STONE, Blocks.BLACKSTONE, Blocks.DEEPSLATE, Blocks.ANDESITE,
-                Blocks.DIORITE, Blocks.GRANITE, Blocks.NETHERRACK, Blocks.END_STONE, Blocks.TUFF, Blocks.BASALT);
+                Blocks.DIORITE, Blocks.GRANITE, Blocks.NETHERRACK, Blocks.END_STONE, Blocks.TUFF, Blocks.BASALT,
+                Blocks.CALCITE);
         addMaterials(BlockMaterialGroup.NATURAL_LOGS, Blocks.ACACIA_LOG, Blocks.BIRCH_LOG, Blocks.CHERRY_LOG,
                 Blocks.JUNGLE_LOG, Blocks.MANGROVE_LOG, Blocks.DARK_OAK_LOG, Blocks.OAK_LOG, Blocks.SPRUCE_LOG,
                 Blocks.CRIMSON_HYPHAE, Blocks.WARPED_HYPHAE);
