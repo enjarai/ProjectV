@@ -1,5 +1,6 @@
 package dev.enjarai.projectv.mixin.item;
 
+import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
@@ -57,5 +58,13 @@ public abstract class ItemStackMixin implements ItemStackExtender {
             return leftVariant.equals(rightVariant);
         }
         return true;
+    }
+
+    @ModifyExpressionValue(method = "split", at = @At(value = "INVOKE", target = "Lnet/minecraft/item/ItemStack;getCount()I"))
+    private int useTotalCount(int original) {
+        if((Object) this instanceof VariantItemStack self) {
+            return self.getTotalCount();
+        }
+        return original;
     }
 }

@@ -22,12 +22,12 @@ public abstract class DrawContentMixin {
     private void drawVariantItemCount(TextRenderer textRenderer, ItemStack stack, int x, int y, String countOverride, CallbackInfo ci) {
         if (!(stack instanceof VariantItemStack variantStack)) return;
 
-        int adjustedX = x + textRenderer.getWidth(countOverride == null ? String.valueOf(stack.getCount()) : countOverride);
         String totalCount = String.valueOf(variantStack.getTotalCount());
         matrices.push();
+        if(stack.getCount() == 1) matrices.translate(0, 0, 200);
         matrices.scale(0.5f, 0.5f, 1);
-        matrices.translate(adjustedX - 4, y - 4, 0);
-        drawText(textRenderer, totalCount, adjustedX - textRenderer.getWidth(totalCount), y - 12, 0xFF00FFFF, true);
+        matrices.translate(x, y, 0);
+        drawText(textRenderer, totalCount, x - textRenderer.getWidth(totalCount) + 30, y + 1, 0xFF00FFFF, true);
         matrices.pop();
     }
 }

@@ -13,7 +13,8 @@
     "item.ItemStackMixin",
     "item.PlayerInventoryMixin",
     "item.ScreenHandlerMixin",
-    "item.ServerPlayNetworkHandlerMixin"
+    "item.ServerPlayNetworkHandlerMixin",
+    "item.SlotMixin"
   ],
   "injectors": {
     "defaultRequire": 1

@@ -100,6 +100,35 @@ public abstract class ScreenHandlerMixin {
 
     @WrapOperation(
             method = "internalOnSlotClick",
+            at = {
+                    @At(
+                            value = "INVOKE",
+                            target = "Lnet/minecraft/item/ItemStack;getCount()I",
+                            ordinal = 0
+                    ),
+                    @At(
+                            value = "INVOKE",
+                            target = "Lnet/minecraft/item/ItemStack;getCount()I",
+                            ordinal = 1
+                    )
+            },
+            slice = @Slice(
+                    from = @At(
+                            value = "FIELD",
+                            opcode = Opcodes.GETSTATIC,
+                            target = "Lnet/minecraft/util/ClickType;LEFT:Lnet/minecraft/util/ClickType;"
+                    )
+            )
+    )
+    private int getTotalVariantCount(ItemStack instance, Operation<Integer> original) {
+        if(instance instanceof VariantItemStack variantItemStack) {
+            return variantItemStack.getTotalCount();
+        }
+        return original.call(instance);
+    }
+
+    @WrapOperation(
+            method = "internalOnSlotClick",
             at = @At(
                     value = "INVOKE",
                     target = "Lnet/minecraft/screen/slot/Slot;takeStackRange(IILnet/minecraft/entity/player/PlayerEntity;)Lnet/minecraft/item/ItemStack;"

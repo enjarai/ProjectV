@@ -109,7 +109,7 @@ public class VariantItemStack extends ItemStack {
     }
 
     @Override
-    public VariantItemStack copy() {
+    public ItemStack copy() {
         if (this.isEmpty()) {
             return EMPTY;
         } else {
@@ -120,15 +120,25 @@ public class VariantItemStack extends ItemStack {
     }
 
     @Override
-    public VariantItemStack copyWithCount(int count) {
-        return ((ItemStackExtender) super.copyWithCount(count)).projectV$toVariantItemStack();
+    public ItemStack copyWithCount(int count) {
+        return super.copyWithCount(Math.min(count, getCount()));
     }
 
     @Override
     public ItemStack split(int amount) {
-        ItemStack split = super.split(amount);
-        if(!isEmpty() && split instanceof VariantItemStack variantItemStack) {
-            variantItemStack.clearVariants();
+        int mainCount = getCount();
+        int totalCount = getTotalCount();
+        VariantItemStack split = (VariantItemStack) super.split(amount);
+        int splitCount = split.getTotalCount();
+        if(!isEmpty() || mainCount == amount) {
+            split.clearVariants();
+        }
+        if (isEmpty() && !variants.isEmpty() && !variants.equals(split.variants) && splitCount == totalCount) {
+            ItemStack nextStack = variants.next();
+            if(!nextStack.isEmpty()) {
+                setItem(nextStack.getItem());
+                setCount(nextStack.getCount());
+            }
         }
         return split;
     }
