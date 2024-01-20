@@ -6,15 +6,14 @@ import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
-import net.minecraft.item.BlockItem;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.tag.TagKey;
 import net.minecraft.util.Identifier;
+import net.minecraft.world.poi.PointOfInterestTypes;
 import org.jetbrains.annotations.ApiStatus;
 
-import java.security.BasicPermission;
 import java.util.*;
 
 public final class BlockVariantGenerator {
@@ -36,6 +35,11 @@ public final class BlockVariantGenerator {
         HOLDERS.computeIfAbsent(materialGroup, ignored -> new HashSet<>()).add(new BlockVariantHolder<>(original, factory, tags));
     }
 
+    @SafeVarargs
+    public static <O extends Block, V extends Block & VariantBlock> void addVariant(O original, ExtendedVariantBlockFactory<O, V> factory, BlockMaterialGroup materialGroup, TagKey<Block>... tags) {
+        addVariant(original, settings -> factory.create(settings, original), materialGroup, tags);
+    }
+
     public static void addMaterials(BlockMaterialGroup group, Block... blocks) {
         Collections.addAll(MATERIALS.computeIfAbsent(group, ignored -> new HashSet<>()), blocks);
     }
@@ -48,6 +52,9 @@ public final class BlockVariantGenerator {
         addVariant(Blocks.CRAFTING_TABLE, VariantCraftingTableBlock::new, BlockMaterialGroup.PLANKS,
                 getTag(new Identifier("c", "workbench")),
                 getTag(new Identifier("c", "crafting_tables")),
+                getTag(new Identifier("minecraft", "mineable/axe")));
+        addVariant(Blocks.LECTERN, VariantLecternBlock::new, BlockMaterialGroup.PLANKS,
+                getTag(new Identifier("c", "lecterns")),
                 getTag(new Identifier("minecraft", "mineable/axe")));
 
         addVariant(Blocks.DIAMOND_ORE, BasicVariantBlock::new, BlockMaterialGroup.STONE,
@@ -75,7 +82,10 @@ public final class BlockVariantGenerator {
     }
 
     private static void registerVariant(Block materialBlock, BlockVariantHolder<?, ?> holder) {
-        var block = holder.factory.create(FabricBlockSettings.copyOf(materialBlock));
+        var block = holder.factory.create(
+                //TODO: Find better System to do this. Can't be in VariantBlock as isn't available yet
+                FabricBlockSettings.copyOf(holder.original).sounds(materialBlock.getSoundGroup(materialBlock.getDefaultState()))
+        );
         var identifier = ProjectV.constructVariantIdentifier(Registries.BLOCK, holder.original, materialBlock);
 
         for (var tag : holder.tags) {
@@ -84,6 +94,26 @@ public final class BlockVariantGenerator {
 
         Registry.register(Registries.BLOCK, identifier, block);
         Registry.register(Registries.ITEM, identifier, new BasicVariantBlockItem(holder.original, block, new FabricItemSettings()));
+
+        for (var poiTypeKey : block.getPoiTypes()) {
+            var poiTypeEntry = Registries.POINT_OF_INTEREST_TYPE.getEntry(poiTypeKey)
+                    .orElseThrow(() -> new IllegalArgumentException("Incorrect POI type registry key given by variant block: " + identifier));
+            var poiType = poiTypeEntry.value();
+
+            // Get all possible blockstates for our block
+            var allStates = block.getStateManager().getStates();
+
+            // TODO optimise this poggus
+            // Carefully modify a record field to add our states :trolley:
+            var poiStates = new HashSet<>(poiType.blockStates);
+            poiStates.addAll(allStates);
+            poiType.blockStates = poiStates;
+
+            // Add the same states to the poitypes reverse lookup hashmap
+            for (var state : allStates) {
+                PointOfInterestTypes.POI_STATES_TO_TYPE.put(state, poiTypeEntry);
+            }
+        }
     }
 
     @ApiStatus.Internal
@@ -115,6 +145,11 @@ public final class BlockVariantGenerator {
     @FunctionalInterface
     public interface VariantBlockFactory<V extends Block & VariantBlock> {
         V create(FabricBlockSettings settings);
+    }
+
+    @FunctionalInterface
+    public interface ExtendedVariantBlockFactory<O extends Block, V extends Block & VariantBlock> {
+        V create(FabricBlockSettings settings, O original);
     }
 
     @FunctionalInterface

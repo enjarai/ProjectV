@@ -3,8 +3,11 @@
   "package": "dev.enjarai.projectv.mixin",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
+    "BlockEntityTypeMixin",
+    "TagManagerLoaderMixin",
+    "craftingtable.ScreenHandlerMixin",
+    "lectern.BothBookItemMixin",
     "LifecycledResourceManagerImplMixin",
-    "ScreenHandlerMixin",
     "TagManagerLoaderMixin",
     "item.ClickSlotC2SPacketMixin",
     "item.ItemEntityMixin",

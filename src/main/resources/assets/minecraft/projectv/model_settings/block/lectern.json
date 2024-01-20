@@ -1,0 +1,38 @@
+{
+  "textures": {
+    "bottom": {
+      "merge_function": {
+        "type": "projectv:original_material_texture"
+      }
+    },
+    "base": {
+      "base": "minecraft:block/lectern_base",
+      "merge_function": {
+        "type": "projectv:palette",
+        "key": "minecraft:oak_planks"
+      }
+    },
+    "front": {
+      "base": "minecraft:block/lectern_front",
+      "merge_function": {
+        "type": "projectv:palette",
+        "key": "minecraft:oak_planks"
+      }
+    },
+    "sides": {
+      "base": "minecraft:block/lectern_sides",
+      "merge_function": {
+        "type": "projectv:palette",
+        "key": "minecraft:oak_planks"
+      }
+    },
+    "top": {
+      "base": "minecraft:block/lectern_top",
+      "merge_function": {
+        "type": "projectv:palette",
+        "key": "minecraft:oak_planks"
+      }
+    },
+    "particle": "sides"
+  }
+}

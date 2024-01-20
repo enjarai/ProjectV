@@ -2,6 +2,7 @@ package dev.enjarai.projectv.resource.json;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.gson.JsonElement;
+import com.google.gson.JsonParseException;
 import com.mojang.datafixers.util.Either;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.JsonOps;
@@ -15,7 +16,11 @@ public record VariantBaseSettings(Map<String, Either<String, VariantTextureSetti
     ).apply(instance, VariantBaseSettings::new));
 
     public static VariantBaseSettings fromJsonOrThrow(JsonElement json) {
-        return CODEC.decode(JsonOps.INSTANCE, json).result().orElseThrow().getFirst();
+        var result = CODEC.decode(JsonOps.INSTANCE, json);
+        if (result.result().isEmpty()) {
+            throw new JsonParseException(result.error().orElseThrow().message());
+        }
+        return result.result().get().getFirst();
     }
 
     public Map<String, VariantTextureSettings> getNormalizedTextures() {
