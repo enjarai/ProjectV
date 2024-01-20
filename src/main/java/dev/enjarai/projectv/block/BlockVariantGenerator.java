@@ -1,11 +1,11 @@
 package dev.enjarai.projectv.block;
 
 import dev.enjarai.projectv.ProjectV;
+import dev.enjarai.projectv.item.BasicVariantBlockItem;
 import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
-import net.minecraft.item.BlockItem;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.registry.RegistryKeys;
@@ -93,7 +93,7 @@ public final class BlockVariantGenerator {
         }
 
         Registry.register(Registries.BLOCK, identifier, block);
-        Registry.register(Registries.ITEM, identifier, new BlockItem(block, new FabricItemSettings()));
+        Registry.register(Registries.ITEM, identifier, new BasicVariantBlockItem(holder.original, block, new FabricItemSettings()));
 
         for (var poiTypeKey : block.getPoiTypes()) {
             var poiTypeEntry = Registries.POINT_OF_INTEREST_TYPE.getEntry(poiTypeKey)

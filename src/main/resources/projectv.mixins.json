@@ -8,7 +8,16 @@
     "craftingtable.ScreenHandlerMixin",
     "lectern.BothBookItemMixin",
     "LifecycledResourceManagerImplMixin",
-    "TagManagerLoaderMixin"
+    "TagManagerLoaderMixin",
+    "item.ClickSlotC2SPacketMixin",
+    "item.ItemEntityMixin",
+    "item.ItemMixin",
+    "item.ItemStackArgumentMixin",
+    "item.ItemStackMixin",
+    "item.PlayerInventoryMixin",
+    "item.ScreenHandlerMixin",
+    "item.ServerPlayNetworkHandlerMixin",
+    "item.SlotMixin"
   ],
   "injectors": {
     "defaultRequire": 1

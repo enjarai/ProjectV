@@ -1,5 +1,10 @@
 accessWidener v2 named
 
+extendable class net/minecraft/item/ItemStack
+extendable method net/minecraft/item/ItemStack <init> (Lnet/minecraft/nbt/NbtCompound;)V
+extendable method net/minecraft/item/ItemStack <init> (Ljava/lang/Void;)V
+extendable method net/minecraft/item/ItemStack <init> (Lnet/minecraft/item/ItemConvertible;ILjava/util/Optional;)V
+
 # JVM trolling to make POI's work
 accessible field net/minecraft/world/poi/PointOfInterestType blockStates Ljava/util/Set;
 mutable field net/minecraft/world/poi/PointOfInterestType blockStates Ljava/util/Set;
