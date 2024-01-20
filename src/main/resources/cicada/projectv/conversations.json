@@ -1,0 +1,91 @@
+{
+  "mod_id": "projectv",
+
+  "conversations": {
+    "cicada:greetings": {
+      "lines": [
+        {
+          "order": 60,
+          "text": "Hya! Hiiiii! Ready to create a blockstate overload!"
+        },
+        {
+          "condition": {
+            "type": "cicada:mod_participates",
+            "mod_id": "omnihopper"
+          },
+          "order": 62,
+          "text": "Wait you too???"
+        },
+        {
+          "condition": {
+            "type": "cicada:mod_participates",
+            "mod_id": "omnihopper"
+          },
+          "order": 64,
+          "text": "Absolutely perfect! This is gonna be great!!"
+        }
+      ]
+    },
+    "cicada:good_old_days": {
+      "lines": [
+        {
+          "order": 50,
+          "text": "Ohohohoho, you don't say!"
+        }
+      ]
+    },
+
+    "projectv:taking_over": {
+      "priority": {
+        "priority": 100
+      },
+      "lines": [
+        {
+          "order": 0,
+          "text": "Your one-stop shop for variant blocks!!"
+        }
+      ]
+    },
+    "do_a_barrel_roll:rolling_down_in_the_deep": {
+      "lines": [
+        {
+          "order": 10,
+          "text": "Will you *really* though??"
+        }
+      ]
+    },
+    "do_a_barrel_roll:modrinth": {
+      "lines": [
+        {
+          "order": 20,
+          "text": "*Nods furiously*"
+        }
+      ]
+    },
+    "showmeyourskin:plagiarism": {
+      "lines": [
+        {
+          "order": 70,
+          "text": "OH OH OH! CAN I DRIVE A TANK???"
+        }
+      ]
+    },
+
+    "cicada:christmas": {
+      "lines": [
+        {
+          "order": 20,
+          "text": "❄ LET IT SNOW LET IT SNOW LET IT SNOW ❄"
+        }
+      ]
+    },
+    "cicada:new_year": {
+      "lines": [
+        {
+          "order": 20,
+          "text": "\uD83C\uDF86\uD83C\uDF86 HAPPY MEW~ YEAR EVERYNYAN~ \uD83C\uDF86\uD83C\uDF86"
+        }
+      ]
+    }
+  }
+}

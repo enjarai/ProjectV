@@ -23,6 +23,9 @@ repositories {
 	maven {
 		url = "https://maven.enjarai.dev/mirrors"
 	}
+	maven {
+		url = "https://maven.enjarai.dev/releases"
+	}
 }
 
 loom {
@@ -53,7 +56,9 @@ dependencies {
 	// Fabric API. This is technically optional, but you probably want it anyway.
 	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 
-	include(modImplementation("dev.kikugie:crash-pipe:0.1.0"))
+	modImplementation "nl.enjarai:cicada-lib:${project.cicada_version}"
+
+	include(modImplementation("dev.kikugie:crash-pipe:${project.crash_pipe_version}"))
 }
 
 processResources {
