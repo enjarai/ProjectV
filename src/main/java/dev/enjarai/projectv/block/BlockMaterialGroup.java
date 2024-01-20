@@ -19,7 +19,7 @@ public record BlockMaterialGroup(Identifier identifier) {
     /**
      * A type of stone or naturally occurring mineral from any dimension.
      */
-    public static final BlockMaterialGroup STONES = new BlockMaterialGroup(new Identifier(ProjectV.MOD_ID, "stone"));
+    public static final BlockMaterialGroup STONES = new BlockMaterialGroup(new Identifier(ProjectV.MOD_ID, "stones"));
     /**
      * Natural (non-stripped) logs of what can be considered a tree or tree-like plant.
      * <br><br>
@@ -38,5 +38,5 @@ public record BlockMaterialGroup(Identifier identifier) {
     /**
      * Types of what can be considered wool with varying colors and perhaps origins.
      */
-    public static final BlockMaterialGroup WOOL = new BlockMaterialGroup(new Identifier(ProjectV.MOD_ID, "wool"));
+    public static final BlockMaterialGroup WOOLS = new BlockMaterialGroup(new Identifier(ProjectV.MOD_ID, "wools"));
 }

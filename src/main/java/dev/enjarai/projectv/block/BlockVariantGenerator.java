@@ -57,7 +57,7 @@ public final class BlockVariantGenerator {
                 Blocks.CRIMSON_HYPHAE, Blocks.WARPED_HYPHAE);
         addMaterials(BlockMaterialGroup.REFINED_METALS, Blocks.IRON_BLOCK, Blocks.COPPER_BLOCK, Blocks.GOLD_BLOCK,
                 Blocks.NETHERITE_BLOCK);
-        addMaterials(BlockMaterialGroup.WOOL, Blocks.WHITE_WOOL, Blocks.BLACK_WOOL, Blocks.BLUE_WOOL, Blocks.BROWN_WOOL,
+        addMaterials(BlockMaterialGroup.WOOLS, Blocks.WHITE_WOOL, Blocks.BLACK_WOOL, Blocks.BLUE_WOOL, Blocks.BROWN_WOOL,
                 Blocks.CYAN_WOOL, Blocks.GRAY_WOOL, Blocks.GREEN_WOOL, Blocks.LIGHT_BLUE_WOOL, Blocks.LIGHT_GRAY_WOOL,
                 Blocks.LIME_WOOL, Blocks.MAGENTA_WOOL, Blocks.ORANGE_WOOL, Blocks.PINK_WOOL, Blocks.PURPLE_WOOL,
                 Blocks.RED_WOOL, Blocks.YELLOW_WOOL);
