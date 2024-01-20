@@ -83,7 +83,10 @@ public final class BlockVariantGenerator {
     }
 
     private static void registerVariant(Block materialBlock, BlockVariantHolder<?, ?> holder) {
-        var block = holder.factory.create(FabricBlockSettings.copyOf(materialBlock));
+        var block = holder.factory.create(
+                //TODO: Find better System to do this. Can't be in VariantBlock as isn't available yet
+                FabricBlockSettings.copyOf(holder.original).sounds(materialBlock.getSoundGroup(materialBlock.getDefaultState()))
+        );
         var identifier = ProjectV.constructVariantIdentifier(Registries.BLOCK, holder.original, materialBlock);
 
         for (var tag : holder.tags) {
