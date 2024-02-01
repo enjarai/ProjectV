@@ -4,11 +4,10 @@
   "compatibilityLevel": "JAVA_17",
   "mixins": [
     "BlockEntityTypeMixin",
-    "TagManagerLoaderMixin",
-    "craftingtable.ScreenHandlerMixin",
-    "lectern.BothBookItemMixin",
     "LifecycledResourceManagerImplMixin",
     "TagManagerLoaderMixin",
+    "craftingtable.ScreenHandlerMixin",
+    "item.BlockItemMixin",
     "item.ClickSlotC2SPacketMixin",
     "item.ItemEntityMixin",
     "item.ItemMixin",
@@ -17,7 +16,8 @@
     "item.PlayerInventoryMixin",
     "item.ScreenHandlerMixin",
     "item.ServerPlayNetworkHandlerMixin",
-    "item.SlotMixin"
+    "item.SlotMixin",
+    "lectern.BothBookItemMixin"
   ],
   "injectors": {
     "defaultRequire": 1

@@ -13,6 +13,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public abstract class ServerPlayNetworkHandlerMixin {
     @Inject(method = "onClickSlot", at = @At(value = "INVOKE", target = "Lnet/minecraft/screen/ScreenHandler;onSlotClick(IILnet/minecraft/screen/slot/SlotActionType;Lnet/minecraft/entity/player/PlayerEntity;)V"))
     private void readLastDraggedSlot(ClickSlotC2SPacket packet, CallbackInfo ci) {
-        ThreadLocals.LAST_DRAGGED_SLOT_ID.set(((ClickSlotC2SPacketExtender) packet).projectV$getLastDraggedSlot());
+        ThreadLocals.LAST_DRAGGED_SLOT_INDEX.set(((ClickSlotC2SPacketExtender) packet).projectV$getLastDraggedSlot());
     }
 }

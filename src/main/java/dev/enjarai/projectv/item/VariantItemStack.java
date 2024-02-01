@@ -22,24 +22,23 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * A special {@link ItemStack} that can hold multiple variants of an item<br>
+ * {@link ItemStack#item} is the currently selected variant<br>
+ * {@link ItemStack#count} is the amount of the currently selected variant<br>
+ * {@link #variants} is a list of all the variants of the original item<br>
+ * {@link #getTotalCount()} is the total amount of all the variants and the currently selected variant<br>
+ */
+@SuppressWarnings({"JavadocReference", "deprecation"})
 public class VariantItemStack extends ItemStack {
-    public static final Codec<VariantItemStack> CODEC = RecordCodecBuilder.create(
-            instance -> instance.group(
-                    Registries.ITEM.getCodec().fieldOf("id").forGetter(VariantItemStack::getItem),
-                    Codec.INT.fieldOf("Count").forGetter(ItemStack::getCount),
-                    NbtCompound.CODEC.optionalFieldOf("tag").forGetter(stack -> Optional.ofNullable(stack.getNbt())),
-                    Codec.list(ItemStack.CODEC).fieldOf("Variants").forGetter(VariantItemStack::getVariants)
-            ).apply(instance, VariantItemStack::new)
-    );
-
     public static final VariantItemStack EMPTY = new VariantItemStack((Void) null);
+    public static final Codec<VariantItemStack> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+          Registries.ITEM.getCodec().fieldOf("id").forGetter(VariantItemStack::getItem),
+          Codec.INT.fieldOf("Count").forGetter(ItemStack::getCount),
+          NbtCompound.CODEC.optionalFieldOf("tag").forGetter(stack -> Optional.ofNullable(stack.getNbt())),
+          Codec.list(ItemStack.CODEC).fieldOf("Variants").forGetter(VariantItemStack::getVariants)
+    ).apply(instance, VariantItemStack::new));
 
-    /**
-     * Contains the variants contained with in the stack<br>
-     * The {@link ItemStack#item} is the currently selected variant<br>
-     * The {@link ItemStack#count} is the amount of the currently selected variant
-     */
-    @SuppressWarnings("JavadocReference")
     private final VariantList variants;
 
     public VariantItemStack(ItemConvertible item) {
@@ -67,7 +66,7 @@ public class VariantItemStack extends ItemStack {
     }
 
     private VariantItemStack(Void void_) {
-        super(void_ );
+        super(void_);
         variants = new VariantList();
     }
 
@@ -79,27 +78,23 @@ public class VariantItemStack extends ItemStack {
         validate();
     }
 
-    public ItemStack toItemStack() {
-        return new ItemStack(getItem(), getCount());
-    }
-
-    private void validate() {
-        if(isEmpty()) return;
-        if(!(getItem() instanceof VariantItem)) {
-            throw new IllegalStateException("VariantItemStack must be a VariantItem");
-        }
-    }
-
-    private boolean sameItem(ItemStack other) {
-        return ItemStackExtender.sameItem(this, other);
-    }
-
     public static VariantItemStack fromNbt(NbtCompound nbt) {
         try {
             return new VariantItemStack(nbt);
         } catch (RuntimeException e) {
             ProjectV.LOGGER.debug("Tried to load invalid variant item: {}", nbt, e);
             return VariantItemStack.EMPTY;
+        }
+    }
+
+    public ItemStack toItemStack() {
+        return new ItemStack(getItem(), getCount());
+    }
+
+    private void validate() {
+        if (isEmpty()) return;
+        if (!(getItem() instanceof VariantItem)) {
+            throw new IllegalStateException("VariantItemStack must be a VariantItem");
         }
     }
 
@@ -130,17 +125,46 @@ public class VariantItemStack extends ItemStack {
         int totalCount = getTotalCount();
         VariantItemStack split = (VariantItemStack) super.split(amount);
         int splitCount = split.getTotalCount();
-        if(!isEmpty() || mainCount == amount) {
+        if (!isEmpty() || mainCount == amount) {
             split.clearVariants();
         }
         if (isEmpty() && !variants.isEmpty() && !variants.equals(split.variants) && splitCount == totalCount) {
-            ItemStack nextStack = variants.next();
-            if(!nextStack.isEmpty()) {
-                setItem(nextStack.getItem());
-                setCount(nextStack.getCount());
-            }
+            next();
         }
         return split;
+    }
+
+    /**
+     * Sets the current {@link ItemStack#item} and {@link ItemStack#count} to the next variant in the {@link #variants} list<br>
+     * @see #cycle()
+     * @throws IllegalStateException if {@link #isEmpty()} is false
+     */
+    public void next() {
+        if(!isEmpty()) throw new IllegalStateException("Attempting to load next variant onto a non-empty stack, this will delete the current item, use cycle() instead");
+
+        ItemStack next = variants.next();
+        if (next.isEmpty()) {
+            setItem(Items.AIR);
+            setCount(0);
+        } else {
+            setItem(next.getItem());
+            setCount(next.getCount());
+        }
+    }
+
+    /**
+     * Moves the current {@link ItemStack#item} and {@link ItemStack#count} to the end of the {@link #variants} list and sets the current item to the next variant in the list<br>
+     * @see #next()
+     */
+    public void cycle() {
+        if (isEmpty()) return;
+        ItemStack next = variants.next();
+        if (next.isEmpty()) return;
+
+        ItemStack current = toItemStack();
+        variants.add(current);
+        setItem(next.getItem());
+        setCount(next.getCount());
     }
 
     public VariantItem getVariantItem() {
@@ -166,7 +190,7 @@ public class VariantItemStack extends ItemStack {
     @Override
     public List<Text> getTooltip(@Nullable PlayerEntity player, TooltipContext context) {
         List<Text> tooltip = super.getTooltip(player, context);
-        if(isEmpty()) return tooltip;
+        if (isEmpty()) return tooltip;
 
         tooltip.add(Text.of("Variants:"));
         for (ItemStack variant : variants) {
@@ -177,20 +201,39 @@ public class VariantItemStack extends ItemStack {
 
     @Override
     public boolean isOf(Item item) {
-        if(super.isOf(item)) return true;
-        if(this.isEmpty()) return item == Items.AIR;
-        if(!(item instanceof VariantItem variantItem)) return false;
+        if (super.isOf(item)) return true;
+        if (this.isEmpty()) return item == Items.AIR;
+        if (!(item instanceof VariantItem variantItem)) return false;
 
         return variantItem.getOriginal() == getOriginal();
     }
 
     /**
      * Accepts an item stack and if it is a variant of the original item, it will add it to the variants list<br>
-     * if the item is the original item, it will add it to the count of the original item
+     * if the item is the original item, it will add it to the count of the original item<br>
+     *
+     * This should be used instead of vanilla's {@link ItemStack#increment(int)} and {@link ItemStack#decrement(int)} methods.<br>
+     * <br>
+     * Vanilla:
+     * <pre>
+     *     {@code
+     *     int i = otherStack.getCount();
+     *     stack.increment(i);
+     *     otherStack.decrement(i);
+     *     }
+     * </pre>
+     * VariantItemStack:
+     * <pre>
+     *     {@code
+     *     otherStack = stack.accept(otherStack);
+     *     }
+     * </pre>
+     * @see #copyFrom(ItemStack) 
+     * 
      * @return the remaining amount of the item stack that was not accepted
      */
     public ItemStack accept(ItemStack stack) {
-        if(stack instanceof VariantItemStack variantItemStack) {
+        if (stack instanceof VariantItemStack variantItemStack) {
             return accept(variantItemStack);
         }
 
@@ -198,11 +241,11 @@ public class VariantItemStack extends ItemStack {
         int maxCount = getMaxCount();
         int totalCount = getTotalCount();
         int space = maxCount - totalCount;
-        if(space == 0) return stack;
+        if (space == 0) return stack;
 
         Item stackItem = stack.getItem();
-        if(!(stackItem instanceof VariantItem variantItem)) return stack;
-        if(!isEmpty() && variantItem.getOriginal() != getOriginal()) return stack;
+        if (!(stackItem instanceof VariantItem variantItem)) return stack;
+        if (!isEmpty() && variantItem.getOriginal() != getOriginal()) return stack;
 
         if (stackItem == getItem() || isEmpty()) {
             if (space >= inCount) {
@@ -214,12 +257,12 @@ public class VariantItemStack extends ItemStack {
             }
         } else {
             ItemStack existing = variants.getVariant(stackItem);
-            if(existing == null) {
+            if (existing == null) {
                 if (space >= inCount) {
                     variants.add(stack.copy());
                     return ItemStack.EMPTY;
                 } else {
-                    variants.add(stack.split(inCount - space));
+                    variants.add(stack.split(space));
                     return stack;
                 }
             } else {
@@ -234,17 +277,22 @@ public class VariantItemStack extends ItemStack {
         }
     }
 
-    public ItemStack accept(VariantItemStack variantItemStack) {
+    public VariantItemStack accept(VariantItemStack variantItemStack) {
         List<ItemStack> variants = variantItemStack.getVariants();
         VariantItemStack result = ((ItemStackExtender) accept(variantItemStack.getItem(), variantItemStack.getCount())).projectV$toVariantItemStack();
-        if(variants.isEmpty()) return result;
+        if (variants.isEmpty()) return result;
 
-        List<ItemStack> acceptResults = new ArrayList<>();
+        List<ItemStack> remainders = new ArrayList<>();
         for (ItemStack variant : variants) {
-            acceptResults.add(accept(variant.copy()));
+            remainders.add(accept(variant.copy()));
         }
-        acceptResults.removeIf(ItemStack::isEmpty);
-        result.getVariants().addAll(acceptResults);
+        remainders.removeIf(ItemStack::isEmpty);
+        if (remainders.isEmpty()) return result;
+
+        if (result.isEmpty()) {
+            result = ((ItemStackExtender) remainders.remove(0)).projectV$toVariantItemStack();
+        }
+        result.getVariants().addAll(remainders);
         return result;
     }
 
@@ -252,12 +300,39 @@ public class VariantItemStack extends ItemStack {
         return accept(new ItemStack(item, count));
     }
 
+    /**
+     * Used when altering the ItemStack that is passed as a parameter to a method as re-assigning the stack won't affect the original passed stack<br>
+     * Common Usage For Mixin Contexts:<br>
+     * <pre>
+     *     {@code
+     *     private void handler(@Local(ordinal = 0, argsOnly = true) ItemStack stack) {
+     *         VariantItemStack slotStack = slot.getStack();
+     *         ItemStack remainder = slotStack.accept(stack);
+     *         if(stack instanceof VariantItemStack variantStack) {
+     *             variantStack.copyFrom(remainder));
+     *         } else {
+     *             stack.setCount(remainder.getCount());
+     *             ((ItemStackExtender) stack).projectV$setItem(remainder.getItem());
+     *         }
+     *     }
+     *     }
+     *     </pre>
+     */
+    public void copyFrom(ItemStack other) {
+        setCount(other.getCount());
+        setItem(other.getItem());
+        variants.clear();
+        if (other instanceof VariantItemStack variantItemStack) {
+            variants.addAll(variantItemStack.variants);
+        }
+    }
+
     public void setItem(Item item) {
-        if(item == getItem()) return;
-        if(!(item instanceof VariantItem variantItem)) {
+        if (item == getItem()) return;
+        if (!(item instanceof VariantItem variantItem)) {
             throw new IllegalArgumentException("Item must be a VariantItem");
         }
-        if(!isEmpty() && variantItem.getOriginal() != getOriginal()) {
+        if (!isEmpty() && variantItem.getOriginal() != getOriginal()) {
             throw new IllegalArgumentException("Item must be a variant of the original item");
         }
         ((ItemStackExtender) this).projectV$setItem(item);
@@ -275,7 +350,7 @@ public class VariantItemStack extends ItemStack {
     public boolean equals(Object obj) {
         if (this == obj) return true;
         if (!(obj instanceof VariantItemStack other)) return false;
-        if (!sameItem(other)) return false;
+        if (!ItemStackExtender.sameItem(this, other)) return false;
         return variants.equals(other.variants);
     }
 
@@ -284,12 +359,16 @@ public class VariantItemStack extends ItemStack {
      * To add a {@link VariantItemStack} to this list, deconstruct it to it's variants and add them individually
      */
     static class VariantList extends ArrayList<ItemStack> {
-        private static final IllegalArgumentException EXCEPTION = new IllegalArgumentException("VariantItemStacks are not allowed");
-
         public static VariantList of(List<ItemStack> variants) {
             VariantList list = new VariantList();
             list.addAll(variants);
             return list;
+        }
+
+        private static void validate(ItemStack itemStack) {
+            if (itemStack instanceof VariantItemStack) {
+                throw new IllegalArgumentException("VariantItemStacks are not allowed");
+            }
         }
 
         public int getTotalCount() {
@@ -301,7 +380,7 @@ public class VariantItemStack extends ItemStack {
         }
 
         public ItemStack next() {
-            if(isEmpty()) return ItemStack.EMPTY;
+            if (isEmpty()) return ItemStack.EMPTY;
             return remove(0);
         }
 
@@ -319,7 +398,7 @@ public class VariantItemStack extends ItemStack {
 
         @Override
         public boolean addAll(Collection<? extends ItemStack> c) {
-            for(ItemStack itemStack : c) {
+            for (ItemStack itemStack : c) {
                 validate(itemStack);
             }
             return super.addAll(c);
@@ -327,7 +406,7 @@ public class VariantItemStack extends ItemStack {
 
         @Override
         public boolean addAll(int index, Collection<? extends ItemStack> c) {
-            for(ItemStack itemStack : c) {
+            for (ItemStack itemStack : c) {
                 validate(itemStack);
             }
             return super.addAll(index, c);
@@ -337,12 +416,6 @@ public class VariantItemStack extends ItemStack {
         public ItemStack set(int index, ItemStack element) {
             validate(element);
             return super.set(index, element);
-        }
-
-        private static void validate(ItemStack itemStack) {
-            if(itemStack instanceof VariantItemStack) {
-                throw EXCEPTION;
-            }
         }
     }
 }
