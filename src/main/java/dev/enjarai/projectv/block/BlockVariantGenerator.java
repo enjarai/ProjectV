@@ -37,8 +37,13 @@ public final class BlockVariantGenerator {
     }
 
     @SafeVarargs
+    public static <O extends Block, V extends Block & VariantBlock> void addVariant(O original, SimpleVariantBlockFactory<V> factory, BlockMaterialGroup materialGroup, TagKey<Block>... tags) {
+        addVariant(original, (settings, materialBlock) -> factory.create(settings), materialGroup, tags);
+    }
+
+    @SafeVarargs
     public static <O extends Block, V extends Block & VariantBlock> void addVariant(O original, ExtendedVariantBlockFactory<O, V> factory, BlockMaterialGroup materialGroup, TagKey<Block>... tags) {
-        addVariant(original, settings -> factory.create(settings, original), materialGroup, tags);
+        addVariant(original, (settings, materialBlock) -> factory.create(settings, materialBlock, original), materialGroup, tags);
     }
 
     public static void addMaterials(BlockMaterialGroup group, Block... blocks) {
@@ -88,7 +93,8 @@ public final class BlockVariantGenerator {
     private static void registerVariant(Block materialBlock, BlockVariantHolder<?, ?> holder) {
         var block = holder.factory.create(
                 //TODO: Find better System to do this. Can't be in VariantBlock as isn't available yet
-                FabricBlockSettings.copyOf(holder.original).sounds(materialBlock.getSoundGroup(materialBlock.getDefaultState()))
+                FabricBlockSettings.copyOf(holder.original).sounds(materialBlock.getSoundGroup(materialBlock.getDefaultState())),
+                materialBlock
         );
         var identifier = ProjectV.constructVariantIdentifier(Registries.BLOCK, holder.original, materialBlock);
 
@@ -147,13 +153,18 @@ public final class BlockVariantGenerator {
     }
 
     @FunctionalInterface
-    public interface VariantBlockFactory<V extends Block & VariantBlock> {
+    public interface SimpleVariantBlockFactory<V extends Block & VariantBlock> {
         V create(FabricBlockSettings settings);
     }
 
     @FunctionalInterface
+    public interface VariantBlockFactory<V extends Block & VariantBlock> {
+        V create(FabricBlockSettings settings, Block materialBlock);
+    }
+
+    @FunctionalInterface
     public interface ExtendedVariantBlockFactory<O extends Block, V extends Block & VariantBlock> {
-        V create(FabricBlockSettings settings, O original);
+        V create(FabricBlockSettings settings, Block materialBlock, O original);
     }
 
     @FunctionalInterface

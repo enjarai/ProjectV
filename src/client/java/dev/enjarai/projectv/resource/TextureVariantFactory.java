@@ -54,8 +54,7 @@ public interface TextureVariantFactory {
     static TextureUsing overlay() {
         return (resourceManager, baseTexture, materialTextureSupplier) -> {
             try (var materialTexture = materialTextureSupplier.get("base")) {
-                var resultTexture = materialTexture.applyToCopy(IntUnaryOperator.identity()); // don't close this one either, also returned
-                return ImageUtils.overlayImageWithTransparency(resultTexture, baseTexture);
+                return ImageUtils.backgroundImageWithTransparency(materialTexture, baseTexture);
             }
         };
     }

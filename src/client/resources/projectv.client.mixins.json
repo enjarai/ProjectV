@@ -3,7 +3,8 @@
   "package": "dev.enjarai.projectv.mixin.client",
   "compatibilityLevel": "JAVA_17",
   "client": [
-    "BakedModelManagerMixin"
+    "BakedModelManagerMixin",
+    "chest.TexturedRenderLayersMixin"
   ],
   "injectors": {
     "defaultRequire": 1

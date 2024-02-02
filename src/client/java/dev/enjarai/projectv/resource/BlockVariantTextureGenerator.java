@@ -6,11 +6,8 @@ import com.google.gson.JsonParseException;
 import com.google.gson.JsonParser;
 import dev.enjarai.projectv.ProjectV;
 import dev.enjarai.projectv.block.BlockVariantGenerator;
-import dev.enjarai.projectv.pack.PackAdderEvent;
 import dev.enjarai.projectv.pack.RuntimePack;
 import dev.enjarai.projectv.resource.json.VariantBaseSettings;
-import net.fabricmc.fabric.api.resource.ResourceReloadListenerKeys;
-import net.fabricmc.fabric.api.resource.SimpleSynchronousResourceReloadListener;
 import net.minecraft.data.client.*;
 import net.minecraft.registry.Registries;
 import net.minecraft.resource.ResourceManager;
@@ -35,18 +32,20 @@ public class BlockVariantTextureGenerator {
     public static void reload(ResourceManager manager) {
         ProjectV.LOGGER.info("Generating variant textures and models...");
         var startTime = System.currentTimeMillis();
-        var mapBuilder = ImmutableMap.<Identifier, byte[]>builder();
+        var assetMap = ImmutableMap.<Identifier, byte[]>builder();
         BlockVariantGenerator.iterateOverGroups(materialGroup -> {
             BlockVariantGenerator.iterateOverVariants(materialGroup, (baseBlock, materialBlock) -> {
 
                 var baseId = Registries.BLOCK.getId(baseBlock);
                 var materialId = Registries.BLOCK.getId(materialBlock);
 
+                // We use this down below
+                var properlyKeyedTextures = new HashMap<TextureKey, Identifier>();
+
                 try {
                     var variantBlockId = ProjectV.constructVariantIdentifier(Registries.BLOCK, baseBlock, materialBlock);
 
                     var originalStateJson = JsonParser.parseReader(manager.openAsReader(baseId.withPrefixedPath("blockstates/").withSuffixedPath(".json")));
-                    AtomicReference<Identifier> firstModel = new AtomicReference<>();
 
                     var generatedStateJson = mapBlockStateModelsCached(originalStateJson, baseModelId -> {
                         var settings = VariantBaseSettings.fromJsonOrThrow(JsonParser.parseReader(
@@ -58,12 +57,26 @@ public class BlockVariantTextureGenerator {
                             var right = textureEntry.getValue().right();
                             if (right.isPresent()) {
                                 var textureSettings = right.get();
+
+                                // Find the base and material textures and use them with the merge function
+                                // Uses a try-with-resources statement to prevent memory leaks (hopefully)
                                 try (var generatedTexture = textureSettings.mergeFunction().createVariant(
                                         manager, textureSettings.baseTexture().map(id -> id.withPrefixedPath("projectv/base_texture/").withSuffixedPath(".png")).orElse(null),
                                         s -> materialId.withPrefixedPath("projectv/material/block/" + s + "/").withSuffixedPath(".png")
                                 )) {
-                                    var textureId = variantBlockId.withPrefixedPath("block/").withSuffixedPath("_" + textureEntry.getKey());
-                                    mapBuilder.put(textureId.withPrefixedPath("textures/").withSuffixedPath(".png"), generatedTexture.getBytes());
+
+                                    // Turn the block id (projectv:something) into a texture id (projectv:blocks/something_texture)
+                                    var textureId = variantBlockId
+                                            .withPrefixedPath(textureSettings.generatedTexturePrefix())
+                                            .withSuffixedPath("_" + textureEntry.getKey());
+
+                                    // Put the literal file for the texture into the asset map (projectv:textures/blocks/something_texture.png)
+                                    assetMap.put(textureId
+                                            .withPrefixedPath("textures/")
+                                            .withSuffixedPath(".png"),
+                                            generatedTexture.getBytes());
+
+                                    // Put this texture id in the textures map with its key to be added to the model
                                     textures.put(textureEntry.getKey(), textureId);
                                 }
                             }
@@ -77,34 +90,29 @@ public class BlockVariantTextureGenerator {
 
                         // Generate model
                         var variantModelId = variantBlockId.withPrefixedPath("block/");
-                        var properlyKeyedTextures = new HashMap<TextureKey, Identifier>();
                         textures.forEach((k, v) -> properlyKeyedTextures.put(TextureKey.of(k), v)); // Its stupid but we gotta do this
                         var generatedModelJson = new Model(Optional.of(baseModelId), Optional.empty())
                                 .createJson(variantModelId, properlyKeyedTextures);
-                        mapBuilder.put(variantModelId.withPrefixedPath("models/").withSuffixedPath(".json"), generatedModelJson.toString().getBytes(StandardCharsets.UTF_8));
-
-                        // TODO Find a better way to deal with item models
-                        if (firstModel.get() == null) {
-                            firstModel.set(variantModelId);
-                        }
+                        assetMap.put(variantModelId.withPrefixedPath("models/").withSuffixedPath(".json"), generatedModelJson.toString().getBytes(StandardCharsets.UTF_8));
 
                         return variantModelId;
                     });
 
                     // Generate state definition
-                    mapBuilder.put(variantBlockId.withPrefixedPath("blockstates/").withSuffixedPath(".json"), generatedStateJson.toString().getBytes(StandardCharsets.UTF_8));
+                    assetMap.put(variantBlockId.withPrefixedPath("blockstates/").withSuffixedPath(".json"), generatedStateJson.toString().getBytes(StandardCharsets.UTF_8));
 
                     // Generate item model
                     var variantItemModelId = variantBlockId.withPrefixedPath("models/item/");
-                    var generatedItemModelJson = new Model(Optional.of(firstModel.get()), Optional.empty()).createJson(variantItemModelId, Map.of());
-                    mapBuilder.put(variantItemModelId.withSuffixedPath(".json"), generatedItemModelJson.toString().getBytes(StandardCharsets.UTF_8));
+                    // Use base model as parent but override with our textures
+                    var generatedItemModelJson = new Model(Optional.of(baseId.withPrefixedPath("item/")), Optional.empty()).createJson(variantItemModelId, properlyKeyedTextures);
+                    assetMap.put(variantItemModelId.withSuffixedPath(".json"), generatedItemModelJson.toString().getBytes(StandardCharsets.UTF_8));
 
                 } catch (Exception e) {
                     ProjectV.LOGGER.error(String.format("Failed to apply variant %s to %s", materialId, baseId), e);
                 }
             });
         });
-        var map = mapBuilder.buildKeepingLast();
+        var map = assetMap.buildKeepingLast();
 
         var timeElapsed = System.currentTimeMillis() - startTime;
         ProjectV.LOGGER.info("Done! Generated {} files, took {} ms.", map.size(), timeElapsed);

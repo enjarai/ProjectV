@@ -1,0 +1,30 @@
+{
+  "textures": {
+    "particle": {
+      "merge_function": {
+        "type": "projectv:original_material_texture"
+      }
+    },
+    "normal": {
+      "base": "minecraft:block/normal_chest",
+      "merge_function": {
+        "type": "projectv:overlay"
+      },
+      "generated_texture_prefix": "entity/chest/"
+    },
+    "normal_left": {
+      "base": "minecraft:block/normal_chest_left",
+      "merge_function": {
+        "type": "projectv:overlay"
+      },
+      "generated_texture_prefix": "entity/chest/"
+    },
+    "normal_right": {
+      "base": "minecraft:block/normal_chest_right",
+      "merge_function": {
+        "type": "projectv:overlay"
+      },
+      "generated_texture_prefix": "entity/chest/"
+    }
+  }
+}

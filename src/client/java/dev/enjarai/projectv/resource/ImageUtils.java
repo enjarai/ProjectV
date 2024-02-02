@@ -33,18 +33,19 @@ public class ImageUtils {
         return source;
     }
 
-    @Contract("_, _ -> param1")
-    public static NativeImage overlayImageWithTransparency(NativeImage source, NativeImage overlay) {
-        for (int x = 0; x < source.getWidth(); x++) {
-            for (int y = 0; y < source.getHeight(); y++) {
-                var sourceColor = source.getColor(x, y);
+    @Contract("_, _ -> new")
+    public static NativeImage backgroundImageWithTransparency(NativeImage background, NativeImage overlay) {
+        var result = new NativeImage(overlay.getWidth(), overlay.getHeight(), false);
+        for (int x = 0; x < result.getWidth(); x++) {
+            for (int y = 0; y < result.getHeight(); y++) {
+                var sourceColor = background.getColor(x % background.getWidth(), y % background.getHeight());
                 var overlayColor = overlay.getColor(x, y);
 
                 var blended = overlay(sourceColor, overlayColor);
-                source.setColor(x, y, blended);
+                result.setColor(x, y, blended);
             }
         }
-        return source;
+        return result;
     }
 
     private static int overlay(int baseColor, int overlayColor) {

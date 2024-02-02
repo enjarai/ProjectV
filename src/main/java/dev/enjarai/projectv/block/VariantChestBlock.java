@@ -6,12 +6,19 @@ import net.minecraft.block.ChestBlock;
 import net.minecraft.block.entity.BlockEntityType;
 
 public class VariantChestBlock extends ChestBlock implements VariantBlock {
-    public VariantChestBlock(Settings settings) {
+    private final Block materialBlock;
+
+    public VariantChestBlock(Settings settings, Block materialBlock, Block original) {
         super(settings, () -> BlockEntityType.CHEST);
+        this.materialBlock = materialBlock;
     }
 
     @Override
     public Block getBaseBlock() {
         return Blocks.CHEST;
+    }
+
+    public Block getMaterialBlock() {
+        return materialBlock;
     }
 }
