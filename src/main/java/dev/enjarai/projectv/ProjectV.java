@@ -1,6 +1,7 @@
 package dev.enjarai.projectv;
 
 import dev.enjarai.projectv.block.BlockVariantGenerator;
+import dev.enjarai.projectv.data.BlockVariantLootTableGenerator;
 import dev.enjarai.projectv.data.BlockVariantTagGenerator;
 import dev.enjarai.projectv.pack.PackAdderEvent;
 import net.fabricmc.api.ModInitializer;
@@ -33,6 +34,7 @@ public class ProjectV implements ModInitializer, CicadaEntrypoint {
 		PackAdderEvent.EVENT.register((managerType, packs) -> {
 			if (managerType == ResourceType.SERVER_DATA) {
 				packs.add(BlockVariantTagGenerator.PACK);
+				packs.add(BlockVariantLootTableGenerator.PACK);
 			}
 		});
 	}
