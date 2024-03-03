@@ -12,7 +12,6 @@ import net.minecraft.resource.ResourceManager;
 import net.minecraft.resource.ResourceType;
 import net.minecraft.util.Identifier;
 
-import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
 public class BlockVariantLootTableGenerator {
@@ -22,7 +21,7 @@ public class BlockVariantLootTableGenerator {
     public static void reload(ResourceManager manager) {
         var mapBuilder = ImmutableMap.<Identifier, byte[]>builder();
         BlockVariantGenerator.iterateOverGroups(materialGroup ->
-                BlockVariantGenerator.iterateOverVariants(materialGroup, ((baseBlock, materialBlock) ->
+                BlockVariantGenerator.iterateOverVariants(materialGroup, (baseBlock, originalMaterialBlock, materialBlock) ->
                         manager.getResource(baseBlock.getLootTableId().withPrefixedPath("loot_tables/").withSuffixedPath(".json")).ifPresent(resource -> {
                 var variantIdentifier = ProjectV.constructVariantIdentifier(Registries.BLOCK, baseBlock, materialBlock);
                 try (var reader = resource.getReader()) {
@@ -33,11 +32,11 @@ public class BlockVariantLootTableGenerator {
                             // for stuff like silk touch
                             if (entryObject.get("type").getAsString().equals("minecraft:alternatives")) {
                                 for (var child : entryObject.get("children").getAsJsonArray()) {
-                                    replaceEntry(child.getAsJsonObject(), baseBlock, variantIdentifier);
+                                    replaceEntry(child.getAsJsonObject(), baseBlock, originalMaterialBlock, materialBlock, variantIdentifier);
                                 }
                             }
                             // for normal drops
-                            replaceEntry(entryObject, baseBlock, variantIdentifier);
+                            replaceEntry(entryObject, baseBlock, originalMaterialBlock, materialBlock, variantIdentifier);
                         }
                     }
                     mapBuilder.put(variantIdentifier.withPrefixedPath("loot_tables/blocks/").withSuffixedPath(".json"), lootTable.toString().getBytes(StandardCharsets.UTF_8));
@@ -45,16 +44,18 @@ public class BlockVariantLootTableGenerator {
                     // could be IO based or malformed JSON
                     ProjectV.LOGGER.error("While generating loot tables", e);
                 }
-        }))));
+        })));
         var map = mapBuilder.buildKeepingLast();
         PACK.clear();
         map.forEach((key, value) -> PACK.addFileContents(ResourceType.SERVER_DATA, key, value));
     }
 
-    private static void replaceEntry(JsonObject entry, Block baseBlock, Identifier variantIdentifier) {
+    private static void replaceEntry(JsonObject entry, Block baseBlock, Block originalMaterialBlock, Block materialBlock, Identifier variantIdentifier) {
         if (entry.get("type").getAsString().equals("minecraft:item")) {
             var name = entry.getAsJsonObject().get("name").getAsString();
             if (name.equals(Registries.BLOCK.getId(baseBlock).toString())) {
+                entry.getAsJsonObject().addProperty("name", variantIdentifier.toString());
+            } else if (name.equals(Registries.BLOCK.getId(originalMaterialBlock).toString())) {
                 entry.getAsJsonObject().addProperty("name", variantIdentifier.toString());
             }
             // TODO replace the material once we store the original material
