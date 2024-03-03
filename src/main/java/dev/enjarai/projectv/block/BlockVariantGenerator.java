@@ -137,6 +137,8 @@ public final class BlockVariantGenerator {
         var materialBlocks = MATERIALS.get(materialGroup);
         var holders = HOLDERS.get(materialGroup);
 
+        if (holders == null) return;
+
         for (var holder : holders) {
             for (var material : materialBlocks) {
                 consumer.consume(holder.original, holder.material, material);
