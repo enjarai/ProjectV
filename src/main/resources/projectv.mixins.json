@@ -4,11 +4,11 @@
   "compatibilityLevel": "JAVA_17",
   "mixins": [
     "BlockEntityTypeMixin",
+    "LifecycledResourceManagerImplMixin",
+    "LootManagerMixin",
     "TagManagerLoaderMixin",
     "craftingtable.ScreenHandlerMixin",
-    "lectern.BothBookItemMixin",
-    "LifecycledResourceManagerImplMixin",
-    "TagManagerLoaderMixin"
+    "lectern.BothBookItemMixin"
   ],
   "injectors": {
     "defaultRequire": 1

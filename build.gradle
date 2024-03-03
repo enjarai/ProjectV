@@ -10,6 +10,10 @@ base {
 	archivesName = project.archives_base_name
 }
 
+repositories.named("Mojang", MavenArtifactRepository) {
+	artifactUrls ArtifactRepositoryContainer.MAVEN_CENTRAL_URL
+}
+
 repositories {
 	// Add repositories to retrieve artifacts from in here.
 	// You should only use this when depending on other mods because
@@ -22,6 +26,9 @@ repositories {
 	}
 	maven {
 		url = "https://maven.enjarai.dev/mirrors"
+	}
+	maven {
+		url = "https://maven.enjarai.dev/releases"
 	}
 }
 
@@ -53,7 +60,9 @@ dependencies {
 	// Fabric API. This is technically optional, but you probably want it anyway.
 	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 
-	include(modImplementation("dev.kikugie:crash-pipe:0.1.0"))
+	modImplementation "nl.enjarai:cicada-lib:${project.cicada_version}"
+
+	include(modImplementation("dev.kikugie:crash-pipe:${project.crash_pipe_version}"))
 }
 
 processResources {

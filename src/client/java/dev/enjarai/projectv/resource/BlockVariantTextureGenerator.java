@@ -37,7 +37,7 @@ public class BlockVariantTextureGenerator {
         var startTime = System.currentTimeMillis();
         var mapBuilder = ImmutableMap.<Identifier, byte[]>builder();
         BlockVariantGenerator.iterateOverGroups(materialGroup -> {
-            BlockVariantGenerator.iterateOverVariants(materialGroup, (baseBlock, materialBlock) -> {
+            BlockVariantGenerator.iterateOverVariants(materialGroup, (baseBlock, originalMaterialBlock, materialBlock) -> {
 
                 var baseId = Registries.BLOCK.getId(baseBlock);
                 var materialId = Registries.BLOCK.getId(materialBlock);
