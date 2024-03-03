@@ -58,7 +58,6 @@ public class BlockVariantLootTableGenerator {
             } else if (name.equals(Registries.BLOCK.getId(originalMaterialBlock).toString())) {
                 entry.getAsJsonObject().addProperty("name", Registries.BLOCK.getId(materialBlock).toString());
             }
-            // TODO replace the material once we store the original material
         }
     }
 
